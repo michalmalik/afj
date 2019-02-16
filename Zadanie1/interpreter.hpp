@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 
 class Interpreter
@@ -12,18 +13,30 @@ public:
 	enum Status
 	{
 		OK,
-		FILE_NOT_FOUND,
-		NOTHING_TO_DO,
-		INVALID_INSTRUCTION
+		INVALID_INSTRUCTION,
+		INVALID_OPERATOR,
+		VARIABLE_DOESNT_EXIST,
+		INVALID_JUMP
 	};
 
 	explicit Interpreter();
 
-	Status execute(const std::string &filename);
-	Status execute(const std::string &line, size_t line_index);
+	bool loadFile(const std::string &filename);
+	bool loadLine(const std::string &line);
+	Status execute();
+
+	const std::string &getErrorInfo() const { return m_error_info; }
+	size_t getLineNumber() const { return m_line_index + 1; }
 
 private:
-	size_t m_line_index;
+	std::vector<std::string> m_lines;
+
+	std::string m_error_info;
+	size_t m_line_index{ 0 };
+
+	std::map<std::string, int> m_variables;
+
+	Status step(const std::string &line);
 
 	// 0 operators
 	Status ins_nop(Parser &p);
@@ -47,4 +60,11 @@ private:
 	Status ins_lte(Parser &p);
 	Status ins_gte(Parser &p);
 	Status ins_eq(Parser &p);
+
+	bool expect(Parser &p, Parser::Token t);
+	Status jump(int value);
+	Status getValue(Parser &p, int &value);
+
+public:
+	bool getVar(const std::string &varname, int &value);
 };

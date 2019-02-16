@@ -12,7 +12,7 @@ const std::vector<std::string> Parser::token_strings
 	"=", "JUMPT", "JUMPF",
 	"+", "-", "*",
 	"<", ">", "<=", ">=", "==",
-	"(NUMBER)", "(VARIABLE)", "(EOL)"
+	"(NUMBER)", "(VARIABLE)", "(STRING)", "(EOL)"
 };
 
 
@@ -32,6 +32,7 @@ Parser::Token Parser::next()
 	std::string token;
 	if (!std::getline(m_ss, token, ','))
 	{
+		m_tokenstr = "(NEWLINE)";
 		return Token::EOL;
 	}
 
@@ -59,15 +60,14 @@ Parser::Token Parser::next()
 			m_tokennum = std::stoi(token);
 			return Token::NUMBER;
 		}
+		else
+		{
+			m_tokenstr = token;
+			return Token::STRING;
+		}
 	}
 
 	return Token::NOP;
-}
-
-
-bool Parser::expect(Token t)
-{
-	return next() == t;
 }
 
 

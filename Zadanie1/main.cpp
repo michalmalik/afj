@@ -129,6 +129,12 @@ TEST_CASE("Instruction tests", "[parser]")
 	REQUIRE(l5.str() == "variable9999");
 }
 
+TEST_CASE("Functionality tests", "[interpreter]")
+{
+	Interpreter i1;
+	REQUIRE(i1.execute("tests/read_write.txt") == Interpreter::Status::OK);
+}
+
 #else
 
 int main(int argc, char **argv)
@@ -142,9 +148,43 @@ int main(int argc, char **argv)
 	std::string filename(argv[1], 1024);
 	Interpreter interp;
 	
-	std::cout << "Load: " << interp.execute(filename) << "\n";
+	if (!interp.loadFile(filename))
+	{
+		std::cerr << "File \"" << filename << "\" was not found\n";
+		return EXIT_FAILURE;
+	}
 
-	return EXIT_SUCCESS;
+	Interpreter::Status status = interp.execute();
+	switch (status)
+	{
+	case Interpreter::Status::OK:
+		{
+			std::cout << "OK!\n";
+			break;
+		}
+	case Interpreter::Status::INVALID_INSTRUCTION:
+		{
+			std::cerr << "Line: " << interp.getLineNumber() << ", invalid instruction: \"" << interp.getErrorInfo() << "\"\n";
+			break;
+		}
+	case Interpreter::Status::INVALID_OPERATOR:
+		{
+			// Error message handled internally
+			break;
+		}
+	case Interpreter::Status::VARIABLE_DOESNT_EXIST:
+		{
+			std::cerr << "Line: " << interp.getLineNumber() << ", variable \"" << interp.getErrorInfo() << "\" does not exist\n";
+			break;
+		}
+	case Interpreter::Status::INVALID_JUMP:
+		{
+			std::cerr << "Line: " << interp.getLineNumber() << ", invalid jump to line " << interp.getErrorInfo() << "\n";
+			break;
+		}
+	}
+
+	return status;
 }
 
 #endif // _TESTS

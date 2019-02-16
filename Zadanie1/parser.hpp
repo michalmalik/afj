@@ -31,7 +31,7 @@ public:
 		ADD, SUB, MULTIPLY,
 		LT, GT, LTE, GTE, EQ,
 
-		NUMBER, VARIABLE, EOL
+		NUMBER, VARIABLE, STRING, EOL
 	};
 
 	explicit Parser(std::string line);
@@ -39,6 +39,8 @@ public:
 	bool expect(Token t);
 	int num() const { return m_tokennum; }
 	const std::string &str() const { return m_tokenstr; }
+
+	const std::string &token_to_str(Token t) const { return token_strings.at(t); }
 
 	// Only used for tests
 	std::vector<Token> tokenize();
