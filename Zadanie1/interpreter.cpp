@@ -68,11 +68,11 @@ Interpreter::Status Interpreter::execute()
 
 Interpreter::Status Interpreter::step(const std::string &line)
 {
-	Parser p(line);
+	Lexer p(line);
 
 	// First token is always assumed to be the instruction to execute
-	Parser::Token t = p.next();
-	if (t == Parser::Token::EOL)
+	Lexer::Token t = p.next();
+	if (t == Lexer::Token::EOL)
 	{
 		return Status::OK;
 	}
@@ -81,27 +81,27 @@ Interpreter::Status Interpreter::step(const std::string &line)
 	switch (t)
 	{
 	// 0 operators
-	case Parser::Token::NOP: status = ins_nop(p); break;
+	case Lexer::Token::NOP: status = ins_nop(p); break;
 
 	// 1 operator
-	case Parser::Token::JUMP: status = ins_jump(p); break;
-	case Parser::Token::READ: status = ins_read(p); break;
-	case Parser::Token::WRITE: status = ins_write(p); break;
+	case Lexer::Token::JUMP: status = ins_jump(p); break;
+	case Lexer::Token::READ: status = ins_read(p); break;
+	case Lexer::Token::WRITE: status = ins_write(p); break;
 
 	// 2 operators
-	case Parser::Token::ASSIGN: status = ins_assign(p); break;
-	case Parser::Token::JUMPT: status = ins_jumpt(p); break;
-	case Parser::Token::JUMPF: status = ins_jumpf(p); break;
+	case Lexer::Token::ASSIGN: status = ins_assign(p); break;
+	case Lexer::Token::JUMPT: status = ins_jumpt(p); break;
+	case Lexer::Token::JUMPF: status = ins_jumpf(p); break;
 
 	// 3 operators
-	case Parser::Token::ADD: status = ins_add(p); break;
-	case Parser::Token::SUB: status = ins_sub(p); break;
-	case Parser::Token::MULTIPLY: status = ins_multiply(p); break;
-	case Parser::Token::LT: status = ins_lt(p); break;
-	case Parser::Token::GT: status = ins_gt(p); break;
-	case Parser::Token::LTE: status = ins_lte(p); break;
-	case Parser::Token::GTE: status = ins_gte(p); break;
-	case Parser::Token::EQ: status = ins_eq(p); break;
+	case Lexer::Token::ADD: status = ins_add(p); break;
+	case Lexer::Token::SUB: status = ins_sub(p); break;
+	case Lexer::Token::MULTIPLY: status = ins_multiply(p); break;
+	case Lexer::Token::LT: status = ins_lt(p); break;
+	case Lexer::Token::GT: status = ins_gt(p); break;
+	case Lexer::Token::LTE: status = ins_lte(p); break;
+	case Lexer::Token::GTE: status = ins_gte(p); break;
+	case Lexer::Token::EQ: status = ins_eq(p); break;
 
 	default:
 		{
@@ -114,16 +114,16 @@ Interpreter::Status Interpreter::step(const std::string &line)
 }
 
 
-Interpreter::Status Interpreter::ins_nop(Parser &p)
+Interpreter::Status Interpreter::ins_nop(Lexer &p)
 {
 	// Literally do nothing
 	return Status::OK;
 }
 
 
-Interpreter::Status Interpreter::ins_jump(Parser &p)
+Interpreter::Status Interpreter::ins_jump(Lexer &p)
 {
-	if (!expect(p, Parser::Token::NUMBER))
+	if (!expect(p, Lexer::Token::NUMBER))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -132,9 +132,9 @@ Interpreter::Status Interpreter::ins_jump(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_read(Parser &p)
+Interpreter::Status Interpreter::ins_read(Lexer &p)
 {
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -159,9 +159,9 @@ Interpreter::Status Interpreter::ins_read(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_write(Parser &p)
+Interpreter::Status Interpreter::ins_write(Lexer &p)
 {
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -177,9 +177,9 @@ Interpreter::Status Interpreter::ins_write(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_assign(Parser &p)
+Interpreter::Status Interpreter::ins_assign(Lexer &p)
 {
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -200,7 +200,7 @@ Interpreter::Status Interpreter::ins_assign(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_jumpt(Parser &p)
+Interpreter::Status Interpreter::ins_jumpt(Lexer &p)
 {
 	int value;
 	Status status;
@@ -215,7 +215,7 @@ Interpreter::Status Interpreter::ins_jumpt(Parser &p)
 		return Status::OK;
 	}
 
-	if (!expect(p, Parser::Token::NUMBER))
+	if (!expect(p, Lexer::Token::NUMBER))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -224,7 +224,7 @@ Interpreter::Status Interpreter::ins_jumpt(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_jumpf(Parser &p)
+Interpreter::Status Interpreter::ins_jumpf(Lexer &p)
 {
 	int value;
 	Status status;
@@ -239,7 +239,7 @@ Interpreter::Status Interpreter::ins_jumpf(Parser &p)
 		return Status::OK;
 	}
 
-	if (!expect(p, Parser::Token::NUMBER))
+	if (!expect(p, Lexer::Token::NUMBER))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -248,7 +248,7 @@ Interpreter::Status Interpreter::ins_jumpf(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_add(Parser &p)
+Interpreter::Status Interpreter::ins_add(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -263,7 +263,7 @@ Interpreter::Status Interpreter::ins_add(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -274,7 +274,7 @@ Interpreter::Status Interpreter::ins_add(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_sub(Parser &p)
+Interpreter::Status Interpreter::ins_sub(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -289,7 +289,7 @@ Interpreter::Status Interpreter::ins_sub(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -300,7 +300,7 @@ Interpreter::Status Interpreter::ins_sub(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_multiply(Parser &p)
+Interpreter::Status Interpreter::ins_multiply(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -315,7 +315,7 @@ Interpreter::Status Interpreter::ins_multiply(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -326,7 +326,7 @@ Interpreter::Status Interpreter::ins_multiply(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_lt(Parser &p)
+Interpreter::Status Interpreter::ins_lt(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -341,7 +341,7 @@ Interpreter::Status Interpreter::ins_lt(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -352,7 +352,7 @@ Interpreter::Status Interpreter::ins_lt(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_gt(Parser &p)
+Interpreter::Status Interpreter::ins_gt(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -367,7 +367,7 @@ Interpreter::Status Interpreter::ins_gt(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -378,7 +378,7 @@ Interpreter::Status Interpreter::ins_gt(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_lte(Parser &p)
+Interpreter::Status Interpreter::ins_lte(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -393,7 +393,7 @@ Interpreter::Status Interpreter::ins_lte(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -404,7 +404,7 @@ Interpreter::Status Interpreter::ins_lte(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_gte(Parser &p)
+Interpreter::Status Interpreter::ins_gte(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -419,7 +419,7 @@ Interpreter::Status Interpreter::ins_gte(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -430,7 +430,7 @@ Interpreter::Status Interpreter::ins_gte(Parser &p)
 }
 
 
-Interpreter::Status Interpreter::ins_eq(Parser &p)
+Interpreter::Status Interpreter::ins_eq(Lexer &p)
 {
 	int v1, v2;
 	Status status;
@@ -445,7 +445,7 @@ Interpreter::Status Interpreter::ins_eq(Parser &p)
 		return status;
 	}
 
-	if (!expect(p, Parser::Token::VARIABLE))
+	if (!expect(p, Lexer::Token::VARIABLE))
 	{
 		return Status::INVALID_OPERATOR;
 	}
@@ -456,13 +456,13 @@ Interpreter::Status Interpreter::ins_eq(Parser &p)
 }
 
 
-bool Interpreter::expect(Parser &p, Parser::Token t) const
+bool Interpreter::expect(Lexer &p, Lexer::Token t) const
 {
-	Parser::Token got = p.next();
+	Lexer::Token got = p.next();
 	if (got != t)
 	{
 		std::cerr << "Line: " << getLineNumber() << ", expected: " << p.token_to_str(t) << ", got: " << p.token_to_str(got)
-			<< " = " << (got == Parser::Token::NUMBER ? std::to_string(p.num()) : p.str()) << "\n";
+			<< " = " << (got == Lexer::Token::NUMBER ? std::to_string(p.num()) : p.str()) << "\n";
 		return false;
 	}
 
@@ -483,24 +483,24 @@ Interpreter::Status Interpreter::jump(int value)
 }
 
 
-Interpreter::Status Interpreter::getValue(Parser &p, int &value)
+Interpreter::Status Interpreter::getValue(Lexer &p, int &value)
 {
-	Parser::Token t = p.next();
-	if (t == Parser::Token::VARIABLE)
+	Lexer::Token t = p.next();
+	if (t == Lexer::Token::VARIABLE)
 	{
 		if (!getVar(p.str(), value))
 		{
 			return Status::VARIABLE_DOESNT_EXIST;
 		}
 	}
-	else if (t == Parser::Token::NUMBER)
+	else if (t == Lexer::Token::NUMBER)
 	{
 		value = p.num();
 	}
 	else
 	{
-		std::cerr << "Line: " << getLineNumber() << ", expected " << p.token_to_str(Parser::Token::VARIABLE)
-			<< " or " << p.token_to_str(Parser::Token::NUMBER) << ", got: " << p.token_to_str(t) << " = \"" << p.str() << "\"\n";
+		std::cerr << "Line: " << getLineNumber() << ", expected " << p.token_to_str(Lexer::Token::VARIABLE)
+			<< " or " << p.token_to_str(Lexer::Token::NUMBER) << ", got: " << p.token_to_str(t) << " = \"" << p.str() << "\"\n";
 
 		return Status::INVALID_OPERATOR;
 	}

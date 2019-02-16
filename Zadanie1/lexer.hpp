@@ -5,7 +5,7 @@
 #include <sstream>
 
 
-class Parser
+class Lexer
 {
 private:
 	std::string m_line;
@@ -32,7 +32,7 @@ public:
 		NUMBER, VARIABLE, STRING, EOL
 	};
 
-	explicit Parser(std::string line);
+	explicit Lexer(std::string line);
 	Token next();
 
 	int num() const { return m_tokennum; }

@@ -177,12 +177,12 @@
   <ItemGroup>
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="lexer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch.hpp" />
     <ClInclude Include="interpreter.hpp" />
-    <ClInclude Include="parser.hpp" />
+    <ClInclude Include="lexer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

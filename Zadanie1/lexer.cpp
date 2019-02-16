@@ -1,10 +1,10 @@
-#include "parser.hpp"
+#include "lexer.hpp"
 
 #include <iostream>
 #include <algorithm>
 
 
-const std::vector<std::string> Parser::token_strings
+const std::vector<std::string> Lexer::token_strings
 {
 	"NOP",
 	"JUMP", "READ", "WRITE",
@@ -15,7 +15,7 @@ const std::vector<std::string> Parser::token_strings
 };
 
 
-Parser::Parser(std::string line) :
+Lexer::Lexer(std::string line) :
 	m_line{ line }
 {
 	// Remove all whitespace from the line 
@@ -26,7 +26,7 @@ Parser::Parser(std::string line) :
 }
 
 
-Parser::Token Parser::next()
+Lexer::Token Lexer::next()
 {
 	std::string token;
 	if (!std::getline(m_ss, token, ','))
@@ -53,7 +53,6 @@ Parser::Token Parser::next()
 			m_tokenstr = token;
 			return Token::VARIABLE;
 		}
-		
 		else if (token[0] == '-' || isdigit(token[0]))
 		{
 			// Number
@@ -77,7 +76,7 @@ Parser::Token Parser::next()
 }
 
 
-std::vector<Parser::Token> Parser::tokenize()
+std::vector<Lexer::Token> Lexer::tokenize()
 {
 	std::vector<Token> tokens;
 

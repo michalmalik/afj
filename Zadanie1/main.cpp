@@ -60,12 +60,12 @@ int main(int argc, char **argv)
 #include "catch.hpp"
 
 #include <fstream>
-#include "parser.hpp"
+#include "Lexer.hpp"
 
 
-std::vector<std::vector<Parser::Token>> tokenize_file(const std::string &filename)
+std::vector<std::vector<Lexer::Token>> tokenize_file(const std::string &filename)
 {
-	std::vector<std::vector<Parser::Token>> file_tokens;
+	std::vector<std::vector<Lexer::Token>> file_tokens;
 
 	std::ifstream in(filename);
 	if (!in.is_open())
@@ -93,50 +93,50 @@ std::vector<std::vector<Parser::Token>> tokenize_file(const std::string &filenam
 
 	for (const std::string &l : lines)
 	{
-		Parser p(l);
+		Lexer p(l);
 		file_tokens.push_back(p.tokenize());
 	}
 
 	return file_tokens;
 }
 
-TEST_CASE("Parser tests", "[parser]")
+TEST_CASE("Lexer tests", "[Lexer]")
 {
-	std::vector<std::vector<Parser::Token>> t1{
-		{ Parser::Token::READ, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::EQ, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::JUMPT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::MULTIPLY, Parser::Token::VARIABLE, Parser::Token::VARIABLE, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::SUB, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::JUMP, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::WRITE, Parser::Token::VARIABLE, Parser::Token::EOL }
+	std::vector<std::vector<Lexer::Token>> t1{
+		{ Lexer::Token::READ, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::ASSIGN, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::EQ, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::JUMPT, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::MULTIPLY, Lexer::Token::VARIABLE, Lexer::Token::VARIABLE, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::SUB, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::JUMP, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::WRITE, Lexer::Token::VARIABLE, Lexer::Token::EOL }
 	};
 
-	std::vector<std::vector<Parser::Token>> t3{
-		{ Parser::Token::READ, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::LT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::JUMPT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::SUB, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::LT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::JUMPF, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::ADD, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::EQ, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::JUMPF, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::JUMP, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::JUMP, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::WRITE, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::NOP, Parser::Token::EOL }
+	std::vector<std::vector<Lexer::Token>> t3{
+		{ Lexer::Token::READ, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::LT, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::JUMPT, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::SUB, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::LT, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::JUMPF, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::ADD, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::EQ, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::JUMPF, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::ASSIGN, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::JUMP, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::ASSIGN, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::JUMP, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::ASSIGN, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::WRITE, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::NOP, Lexer::Token::EOL }
 	};
 
-	std::vector<std::vector<Parser::Token>> t6{
-		{ Parser::Token::READ, Parser::Token::VARIABLE, Parser::Token::EOL },
-		{ Parser::Token::EOL },
-		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
-		{ Parser::Token::NOP, Parser::Token::EOL }
+	std::vector<std::vector<Lexer::Token>> t6{
+		{ Lexer::Token::READ, Lexer::Token::VARIABLE, Lexer::Token::EOL },
+		{ Lexer::Token::EOL },
+		{ Lexer::Token::ASSIGN, Lexer::Token::VARIABLE, Lexer::Token::NUMBER, Lexer::Token::EOL },
+		{ Lexer::Token::NOP, Lexer::Token::EOL }
 	};
 
 	REQUIRE(tokenize_file("tests/1.txt") == t1);
@@ -147,70 +147,70 @@ TEST_CASE("Parser tests", "[parser]")
 	REQUIRE(tokenize_file("tests/6.txt") == t6);
 }
 
-TEST_CASE("Corner case tests", "[parser]")
+TEST_CASE("Corner case tests", "[Lexer]")
 {
-	Parser l1("420");
-	REQUIRE(l1.next() == Parser::Token::NUMBER);
+	Lexer l1("420");
+	REQUIRE(l1.next() == Lexer::Token::NUMBER);
 	REQUIRE(l1.num() == 420);
 
-	Parser l2("variable");
-	REQUIRE(l2.next() == Parser::Token::VARIABLE);
+	Lexer l2("variable");
+	REQUIRE(l2.next() == Lexer::Token::VARIABLE);
 	REQUIRE(l2.str() == "variable");
 
-	Parser l3("-69");
-	REQUIRE(l3.next() == Parser::Token::NUMBER);
+	Lexer l3("-69");
+	REQUIRE(l3.next() == Lexer::Token::NUMBER);
 	REQUIRE(l3.num() == -69);
 
-	Parser l4("READ,9999variable");
-	REQUIRE(l4.next() == Parser::Token::READ);
-	REQUIRE(l4.next() == Parser::Token::NUMBER);
+	Lexer l4("READ,9999variable");
+	REQUIRE(l4.next() == Lexer::Token::READ);
+	REQUIRE(l4.next() == Lexer::Token::NUMBER);
 	REQUIRE(l4.num() == 9999);
 
-	Parser l5("READ,variable9999");
-	REQUIRE(l5.next() == Parser::Token::READ);
-	REQUIRE(l5.next() == Parser::Token::VARIABLE);
+	Lexer l5("READ,variable9999");
+	REQUIRE(l5.next() == Lexer::Token::READ);
+	REQUIRE(l5.next() == Lexer::Token::VARIABLE);
 	REQUIRE(l5.str() == "variable9999");
 
-	Parser l6("READ");
-	REQUIRE(l6.next() == Parser::Token::READ);
-	REQUIRE(l6.next() == Parser::Token::EOL);
+	Lexer l6("READ");
+	REQUIRE(l6.next() == Lexer::Token::READ);
+	REQUIRE(l6.next() == Lexer::Token::EOL);
 
-	Parser l7("READ,");
-	REQUIRE(l7.next() == Parser::Token::READ);
-	REQUIRE(l7.next() == Parser::Token::EOL);
+	Lexer l7("READ,");
+	REQUIRE(l7.next() == Lexer::Token::READ);
+	REQUIRE(l7.next() == Lexer::Token::EOL);
 
-	Parser l8(",READ");
-	REQUIRE(l8.next() == Parser::Token::EOL);
+	Lexer l8(",READ");
+	REQUIRE(l8.next() == Lexer::Token::EOL);
 
-	Parser l9("READ,,,,,,,");
-	REQUIRE(l9.next() == Parser::Token::READ);
-	REQUIRE(l9.next() == Parser::Token::EOL);
+	Lexer l9("READ,,,,,,,");
+	REQUIRE(l9.next() == Lexer::Token::READ);
+	REQUIRE(l9.next() == Lexer::Token::EOL);
 
-	Parser l10(",,,,,,,READ,,,,,,,");
-	REQUIRE(l10.next() == Parser::Token::EOL);
+	Lexer l10(",,,,,,,READ,,,,,,,");
+	REQUIRE(l10.next() == Lexer::Token::EOL);
 
-	Parser l11("    READ,x    ");
-	REQUIRE(l11.next() == Parser::Token::READ);
-	REQUIRE(l11.next() == Parser::Token::VARIABLE);
-	REQUIRE(l11.next() == Parser::Token::EOL);
+	Lexer l11("    READ,x    ");
+	REQUIRE(l11.next() == Lexer::Token::READ);
+	REQUIRE(l11.next() == Lexer::Token::VARIABLE);
+	REQUIRE(l11.next() == Lexer::Token::EOL);
 
-	Parser l12("    READ,  x    ");
-	REQUIRE(l12.next() == Parser::Token::READ);
-	REQUIRE(l12.next() == Parser::Token::VARIABLE);
-	REQUIRE(l12.next() == Parser::Token::EOL);
+	Lexer l12("    READ,  x    ");
+	REQUIRE(l12.next() == Lexer::Token::READ);
+	REQUIRE(l12.next() == Lexer::Token::VARIABLE);
+	REQUIRE(l12.next() == Lexer::Token::EOL);
 
-	Parser l13("    READ   ,x    ");
-	REQUIRE(l13.next() == Parser::Token::READ);
-	REQUIRE(l13.next() == Parser::Token::VARIABLE);
-	REQUIRE(l13.next() == Parser::Token::EOL);
+	Lexer l13("    READ   ,x    ");
+	REQUIRE(l13.next() == Lexer::Token::READ);
+	REQUIRE(l13.next() == Lexer::Token::VARIABLE);
+	REQUIRE(l13.next() == Lexer::Token::EOL);
 
-	Parser l14("    READ   ,    x    ");
-	REQUIRE(l14.next() == Parser::Token::READ);
-	REQUIRE(l14.next() == Parser::Token::VARIABLE);
-	REQUIRE(l14.next() == Parser::Token::EOL);
+	Lexer l14("    READ   ,    x    ");
+	REQUIRE(l14.next() == Lexer::Token::READ);
+	REQUIRE(l14.next() == Lexer::Token::VARIABLE);
+	REQUIRE(l14.next() == Lexer::Token::EOL);
 
-	Parser l15("%(#*#%&*@($@#()$@$(%(#*^(*#(^&#&^!_)$(@)%(^*&)(!(%");
-	REQUIRE(l15.next() == Parser::Token::STRING);
+	Lexer l15("%(#*#%&*@($@#()$@$(%(#*^(*#(^&#&^!_)$(@)%(^*&)(!(%");
+	REQUIRE(l15.next() == Lexer::Token::STRING);
 }
 
 TEST_CASE("= tests", "[interpreter]")
@@ -604,6 +604,10 @@ TEST_CASE("Instruction tests", "[interpreter]")
 	i5.loadLine("=,i,10");
 	i5.loadLine("JUMP,i");
 	REQUIRE(i5.execute() == Interpreter::Status::INVALID_OPERATOR);
+
+	Interpreter i6;
+	i6.loadLine("=,i,j");
+	REQUIRE(i6.execute() == Interpreter::Status::VARIABLE_DOESNT_EXIST);
 	/*
 	END: very obvious tests
 	*/
