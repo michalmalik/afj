@@ -1,0 +1,9 @@
+READ,i
+=,faktorial,1
+==,i,1,podm
+JUMPT,podm,9
+*,faktorial,i,faktorial
+-,i,1,i
+JUMP,3
+WRITE,faktorial
+
