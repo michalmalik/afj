@@ -19,8 +19,6 @@ private:
 public:
 	enum Token
 	{
-		COMMA,
-
 		// 0 operators
 		NOP,
 		// 1 operator

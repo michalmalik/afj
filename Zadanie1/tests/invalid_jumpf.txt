@@ -1,0 +1,9 @@
+=,i,0
+NOP
+NOP
+JUMPF,i,10
+NOP
+NOP
+NOP
+NOP
+NOP

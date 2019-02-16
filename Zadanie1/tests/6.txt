@@ -1,4 +1,4 @@
    READ     ,    i
    
   =,i,1  
-    NOP    
+    NOP

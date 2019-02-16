@@ -1,0 +1,10 @@
+=,j,1
+NOP
+JUMPT,j,10
+=,x,420
+NOP
+NOP
+NOP
+NOP
+NOP
+=,i,20

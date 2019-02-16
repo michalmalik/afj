@@ -6,7 +6,6 @@
 
 const std::vector<std::string> Parser::token_strings
 {
-	",",
 	"NOP",
 	"JUMP", "READ", "WRITE",
 	"=", "JUMPT", "JUMPF",
@@ -65,6 +64,11 @@ Parser::Token Parser::next()
 			m_tokenstr = token;
 			return Token::STRING;
 		}
+	}
+	else
+	{
+		m_tokenstr = "(NO_DATA)";
+		return Token::EOL;
 	}
 
 	return Token::NOP;

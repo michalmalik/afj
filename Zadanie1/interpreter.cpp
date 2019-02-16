@@ -182,7 +182,7 @@ Interpreter::Status Interpreter::ins_assign(Parser &p)
 		return Status::INVALID_OPERATOR;
 	}
 
-	const std::string &var = p.str();
+	std::string var = p.str();
 
 	int value;
 	Status status;
@@ -458,7 +458,6 @@ bool Interpreter::expect(Parser &p, Parser::Token t)
 	Parser::Token got = p.next();
 	if (got != t)
 	{
-		// TODO EOL
 		std::cerr << "Line: " << getLineNumber() << ", expected: " << p.token_to_str(t) << ", got: " << p.token_to_str(got)
 			<< " = " << (got == Parser::Token::NUMBER ? std::to_string(p.num()) : p.str()) << "\n";
 		return false;
@@ -497,7 +496,6 @@ Interpreter::Status Interpreter::getValue(Parser &p, int &value)
 	}
 	else
 	{
-		// TODO EOL
 		std::cerr << "Line: " << getLineNumber() << ", expected " << p.token_to_str(Parser::Token::VARIABLE)
 			<< " or " << p.token_to_str(Parser::Token::NUMBER) << ", got: " << p.token_to_str(t) << " = \"" << p.str() << "\"\n";
 
