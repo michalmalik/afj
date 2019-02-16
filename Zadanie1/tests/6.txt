@@ -1,4 +1,4 @@
    READ     ,    i
    
-  =,i,j  
- 
+  =,i,1  
+    NOP    

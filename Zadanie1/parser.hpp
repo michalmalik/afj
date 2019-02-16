@@ -14,6 +14,8 @@ private:
 	std::string m_tokenstr;
 	int m_tokennum;
 
+	static const std::vector<std::string> token_strings;
+
 public:
 	enum Token
 	{
@@ -32,9 +34,12 @@ public:
 		NUMBER, VARIABLE, EOL
 	};
 
-	static const std::vector<std::string> token_strings;
-
 	explicit Parser(std::string line);
 	Token next();
 	bool expect(Token t);
+	int num() const { return m_tokennum; }
+	const std::string &str() const { return m_tokenstr; }
+
+	// Only used for tests
+	std::vector<Token> tokenize();
 };

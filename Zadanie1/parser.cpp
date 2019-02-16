@@ -29,63 +29,17 @@ Parser::Parser(std::string line) :
 
 Parser::Token Parser::next()
 {
-	/*
-	if (*m_lineptr == '\n' || *m_lineptr == '\r')
-	{
-		return Token::EOL;
-	}
-
-	while (*m_lineptr <= ' ')
-	{
-		if (*m_lineptr == 0)
-		{
-			return Token::EOL;
-		}
-
-		m_lineptr++;
-	}
-
-	char c;
-	switch ((c = *m_lineptr++))
-	{
-	case ',': return Token::COMMA;
-	case '+': return Token::ADD;
-	case '-': return Token::SUB;
-	case '*': return Token::MULTIPLY;
-	default:
-		{
-			m_lineptr--;
-
-			char tokenstr[64] = { 0 };
-			char *x = tokenstr;
-
-			while (*m_lineptr >= 0x30 && *m_lineptr <= 0x7e)
-				*x++ = *m_lineptr++;
-
-			m_tokenstr = tokenstr;
-
-			for (size_t i = 0; i < token_strings.size(); i++)
-			{
-				if (token_strings.at(i) == m_tokenstr)
-				{
-					return (Token)i;
-				}
-			}
-		}
-	}
-	*/
-
 	std::string token;
 	if (!std::getline(m_ss, token, ','))
 	{
 		return Token::EOL;
 	}
 
-
 	for (size_t i = 0; i < token_strings.size(); i++)
 	{
 		if (token_strings.at(i) == token)
 		{
+			m_tokenstr = token;
 			return static_cast<Token>(i);
 		}
 	}
@@ -114,4 +68,18 @@ Parser::Token Parser::next()
 bool Parser::expect(Token t)
 {
 	return next() == t;
+}
+
+
+std::vector<Parser::Token> Parser::tokenize()
+{
+	std::vector<Token> tokens;
+
+	Token t;
+	do {
+		t = next();
+		tokens.push_back(t);
+	} while (t != Token::EOL);
+
+	return tokens;
 }

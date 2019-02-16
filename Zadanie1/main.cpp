@@ -4,31 +4,132 @@
 
 
 #ifdef _TESTS
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
 
-int main()
+#include <fstream>
+#include "parser.hpp"
+
+
+std::vector<std::vector<Parser::Token>> tokenize_file(const std::string &filename)
 {
-	Interpreter i1("tests/1.txt");
-	std::cout << "Load: " << i1.execute() << "\n";
+	std::vector<std::vector<Parser::Token>> file_tokens;
 
-	/*
-	Interpreter i2("tests/2.txt");
-	std::cout << i2.execute() << "\n";
+	std::ifstream in(filename);
+	if (!in.is_open())
+	{
+		return file_tokens;
+	}
 
-	Interpreter i3("tests/3.txt");
-	std::cout << i3.execute() << "\n";
+	std::vector<std::string> lines;
 
-	Interpreter i4("tests/4.txt");
-	std::cout << i4.execute() << "\n";
+	std::string line;
+	while (std::getline(in, line))
+	{
+		if (!line.empty())
+		{
+			lines.push_back(line);
+		}
+	}
 
-	Interpreter i5("tests/5.txt");
-	std::cout << i5.execute() << "\n";
-	*/
+	in.close();
 
-	system("pause");
-	return 0;
+	if (lines.empty())
+	{
+		return file_tokens;
+	}
+
+	for (const std::string &l : lines)
+	{
+		Parser p(l);
+		file_tokens.push_back(p.tokenize());
+	}
+
+	return file_tokens;
 }
 
-#elif
+TEST_CASE("Parser tests", "[parser]")
+{
+	std::vector<std::vector<Parser::Token>> t1{
+		{ Parser::Token::READ, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::EQ, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::JUMPT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::MULTIPLY, Parser::Token::VARIABLE, Parser::Token::VARIABLE, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::SUB, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::JUMP, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::WRITE, Parser::Token::VARIABLE, Parser::Token::EOL }
+	};
+
+	std::vector<std::vector<Parser::Token>> t3{
+		{ Parser::Token::READ, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::LT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::JUMPT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::SUB, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::LT, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::JUMPF, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::ADD, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::EQ, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::JUMPF, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::JUMP, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::JUMP, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::WRITE, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::NOP, Parser::Token::EOL }
+	};
+
+	std::vector<std::vector<Parser::Token>> t6{
+		{ Parser::Token::READ, Parser::Token::VARIABLE, Parser::Token::EOL },
+		{ Parser::Token::EOL },
+		{ Parser::Token::ASSIGN, Parser::Token::VARIABLE, Parser::Token::NUMBER, Parser::Token::EOL },
+		{ Parser::Token::NOP, Parser::Token::EOL }
+	};
+
+	REQUIRE(tokenize_file("tests/1.txt") == t1);
+	// REQUIRE(tokenize_file("tests/2.txt") == t2);
+	REQUIRE(tokenize_file("tests/3.txt") == t3);
+	//REQUIRE(tokenize_file("tests/4.txt") == t4);
+	//REQUIRE(tokenize_file("tests/3.txt") == t5);
+	REQUIRE(tokenize_file("tests/6.txt") == t6);
+}
+
+TEST_CASE("Instruction tests", "[parser]")
+{
+	Parser l1("READ,variable");
+	REQUIRE(l1.next() == Parser::Token::READ);
+	REQUIRE(l1.next() == Parser::Token::VARIABLE);
+	REQUIRE(l1.str() == "variable");
+
+	Parser l2("+,vstup,2,vstup");
+	REQUIRE(l2.next() == Parser::Token::ADD);
+	REQUIRE(l2.next() == Parser::Token::VARIABLE);
+	REQUIRE(l2.str() == "vstup");
+	REQUIRE(l2.next() == Parser::Token::NUMBER);
+	REQUIRE(l2.num() == 2);
+	REQUIRE(l2.next() == Parser::Token::VARIABLE);
+	REQUIRE(l2.str() == "vstup");
+
+	Parser l3("=,status,-1");
+	REQUIRE(l3.next() == Parser::Token::ASSIGN);
+	REQUIRE(l3.next() == Parser::Token::VARIABLE);
+	REQUIRE(l3.str() == "status");
+	REQUIRE(l3.next() == Parser::Token::NUMBER);
+	REQUIRE(l3.num() == -1);
+
+	Parser l4("READ,9999variable");
+	REQUIRE(l4.next() == Parser::Token::READ);
+	REQUIRE(l4.next() == Parser::Token::NUMBER);
+	REQUIRE(l4.num() == 9999);
+
+	Parser l5("READ,variable9999");
+	REQUIRE(l5.next() == Parser::Token::READ);
+	REQUIRE(l5.next() == Parser::Token::VARIABLE);
+	REQUIRE(l5.str() == "variable9999");
+}
+
+#else
 
 int main(int argc, char **argv)
 {
@@ -39,9 +140,9 @@ int main(int argc, char **argv)
 	}
 
 	std::string filename(argv[1], 1024);
-	Interpreter interp(filename);
+	Interpreter interp;
 	
-	std::cout << "Load: " << interp.load() << "\n";
+	std::cout << "Load: " << interp.execute(filename) << "\n";
 
 	return EXIT_SUCCESS;
 }
