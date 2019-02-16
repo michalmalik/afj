@@ -46,21 +46,23 @@ Parser::Token Parser::next()
 
 	if (!token.empty())
 	{
-		// No strings exist in this language, so variable is assumed
-		// The actual validity of it is questionable
 		if (isalpha(token[0]))
 		{
+			// No strings exist in this language, so variable is assumed
+			// The actual validity of it is questionable and checked by interpreter
 			m_tokenstr = token;
 			return Token::VARIABLE;
 		}
-		// Number
+		
 		else if (token[0] == '-' || isdigit(token[0]))
 		{
+			// Number
 			m_tokennum = std::stoi(token);
 			return Token::NUMBER;
 		}
 		else
 		{
+			// Everything else is a string.. not that we are going to need it
 			m_tokenstr = token;
 			return Token::STRING;
 		}

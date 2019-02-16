@@ -47,7 +47,7 @@ Interpreter::Status Interpreter::execute()
 	{
 		const std::string &line = m_lines.at(m_line_index);
 
-		size_t index_before = m_line_index;
+		const size_t index_before = m_line_index;
 		Status status;
 		if ((status = step(line)) != Status::OK)
 		{
@@ -113,8 +113,10 @@ Interpreter::Status Interpreter::step(const std::string &line)
 	return status;
 }
 
+
 Interpreter::Status Interpreter::ins_nop(Parser &p)
 {
+	// Literally do nothing
 	return Status::OK;
 }
 
@@ -182,6 +184,7 @@ Interpreter::Status Interpreter::ins_assign(Parser &p)
 		return Status::INVALID_OPERATOR;
 	}
 
+	// Cant use ref here as it might disappear later
 	std::string var = p.str();
 
 	int value;
@@ -453,7 +456,7 @@ Interpreter::Status Interpreter::ins_eq(Parser &p)
 }
 
 
-bool Interpreter::expect(Parser &p, Parser::Token t)
+bool Interpreter::expect(Parser &p, Parser::Token t) const
 {
 	Parser::Token got = p.next();
 	if (got != t)

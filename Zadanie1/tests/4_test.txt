@@ -1,0 +1,17 @@
+=,vstup,5
+<,vstup,0,mensi
+JUMPT,mensi,14
+-,vstup,2,vstup
+<,vstup,0,mensi
+JUMPF,mensi,4
++,vstup,2,vstup
+==,vstup,0,jetonula
+JUMPF,jetonula,12
+=,status,0
+JUMP,15
+=,status,1
+JUMP,15
+=,status,-1
+WRITE,statusq
+NOP
+

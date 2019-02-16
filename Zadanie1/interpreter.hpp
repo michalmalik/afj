@@ -61,7 +61,7 @@ private:
 	Status ins_gte(Parser &p);
 	Status ins_eq(Parser &p);
 
-	bool expect(Parser &p, Parser::Token t);
+	bool expect(Parser &p, Parser::Token t) const;
 	Status jump(int value);
 	Status getValue(Parser &p, int &value);
 

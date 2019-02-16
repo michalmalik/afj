@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	std::string filename(argv[1], 1024);
+	std::string filename(argv[1]);
 	Interpreter interp;
 
 	if (!interp.loadFile(filename))
@@ -548,6 +548,65 @@ TEST_CASE("Jump tests", "[interpreter]")
 	REQUIRE(i6.getVar("i", i));
 	REQUIRE(!i6.getVar("x", x));
 	REQUIRE(i == 20);
+}
+
+TEST_CASE("Variable tests", "[interpreter]")
+{
+	Interpreter i1;
+	i1.loadFile("tests/4_test.txt");
+	REQUIRE(i1.execute() == Interpreter::Status::VARIABLE_DOESNT_EXIST);
+	REQUIRE(i1.getLineNumber() == 15);
+	REQUIRE(i1.getErrorInfo() == "statusq");
+
+	Interpreter i2;
+	i2.loadFile("tests/5_test.txt");
+	REQUIRE(i2.execute() == Interpreter::Status::VARIABLE_DOESNT_EXIST);
+	REQUIRE(i2.getLineNumber() == 3);
+	REQUIRE(i2.getErrorInfo() == "vacsi");
+
+	Interpreter i3;
+	i3.loadLine("=,i,10");
+	i3.loadLine("==,j,i,k");
+	REQUIRE(i3.execute() == Interpreter::Status::VARIABLE_DOESNT_EXIST);
+	REQUIRE(i3.getLineNumber() == 2);
+	REQUIRE(i3.getErrorInfo() == "j");
+
+	Interpreter i4;
+	i4.loadLine("=,i,10");
+	i4.loadLine("==,i,j,k");
+	REQUIRE(i4.execute() == Interpreter::Status::VARIABLE_DOESNT_EXIST);
+	REQUIRE(i4.getLineNumber() == 2);
+	REQUIRE(i4.getErrorInfo() == "j");
+}
+
+TEST_CASE("Instruction tests", "[interpreter]")
+{
+	/*
+	START: very obvious tests for invalid forms of instructions
+	*/
+	Interpreter i1;
+	i1.loadLine("READ,25");
+	REQUIRE(i1.execute() == Interpreter::Status::INVALID_OPERATOR);
+
+	Interpreter i2;
+	i2.loadLine("WRITE,25");
+	REQUIRE(i2.execute() == Interpreter::Status::INVALID_OPERATOR);
+
+	Interpreter i3;
+	i3.loadLine("=,10,50");
+	REQUIRE(i3.execute() == Interpreter::Status::INVALID_OPERATOR);
+
+	Interpreter i4;
+	i4.loadLine("==,10,50,20");
+	REQUIRE(i4.execute() == Interpreter::Status::INVALID_OPERATOR);
+
+	Interpreter i5;
+	i5.loadLine("=,i,10");
+	i5.loadLine("JUMP,i");
+	REQUIRE(i5.execute() == Interpreter::Status::INVALID_OPERATOR);
+	/*
+	END: very obvious tests
+	*/
 }
 
 #endif // _TESTS
