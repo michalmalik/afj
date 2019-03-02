@@ -1,13 +1,13 @@
 4
 2
-q0q3 I
+q0 IF
 q1
+q2 F
 q3 F
-q1q2 F
 a
 b
-q0q3,a,q1
-q1,a,q1q2
+q0,a,q1
 q1,b,q3
-q1q2,a,q1q2
-q1q2,b,q3
+q1,a,q2
+q2,a,q2
+q2,b,q3

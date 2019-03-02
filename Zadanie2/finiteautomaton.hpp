@@ -75,7 +75,7 @@ public:
 	*/
 	Status read(const std::string &filename);
 	Status write(const std::string &filename);
-	bool accept();
+	bool accept(const std::string &s);
 
 	/*
 	Let's not even try :)

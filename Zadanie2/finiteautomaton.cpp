@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <iterator>
@@ -35,7 +36,9 @@ FiniteAutomaton::Status FiniteAutomaton::read(const std::string &filename)
 	while (std::getline(in_file, line))
 	{
 		if (!line.empty())
+		{
 			lines.push_back(line);
+		}
 	}
 
 	in_file.close();
@@ -156,75 +159,56 @@ FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename)
 }
 
 
-bool FiniteAutomaton::accept()
+bool FiniteAutomaton::accept(const std::string &s)
 {
+	auto it = std::find_if(m_states.begin(), m_states.end(), [](const std::pair<std::string, State> &p) -> bool {
+		return p.second.isInitial();
+	});
 
-}
-
-
-/*
-bool FiniteAutomaton::operator==(const FiniteAutomaton &rhs)
-{
-	if (m_alphabet != rhs.getAlphabet())
+	if (it == m_states.end())
 	{
 		return false;
 	}
 
-	std::set<std::string> ls, rs;
-	for (const auto &p : m_states)
-		ls.insert(p.first);
+	std::string state = (*it).first;
+	// std::cout << "Initial state: " << state << "\n";
 
-	for (const auto &p : rhs.getStates())
-		rs.insert(p.first);
-
-	// Check if they have same number of states, DONT check names!
-	if (ls.size() != rs.size())
+	size_t idx = 0;
+	while (idx < s.size())
 	{
-		return false;
-	}
-
-	// Check if their state types match
-	for (const std::string &s : ls)
-	{
-		if (m_states.at(s) != rhs.getStates().at(s))
+		if (!m_state_table.count(state))
 		{
-			return false;
-		}
-	}
-
-	for (const std::string &from : ls)
-	{
-		// Check if they have matching states in the state transition table
-		if (m_state_table.count(from) != rhs.getStateTable().count(from))
-		{
+			// State has no transitions
+			// std::cout << "No transition from " << state << "\n";
 			return false;
 		}
 
-		// Assuming they do, check..
-		for (const auto &p : m_state_table.at(from))
+		std::string sym(1, s[idx]);
+
+		if (!m_state_table.at(state).count(sym))
 		{
-			const std::string &symbol = p.first;
-
-			// .. if the other state table has the same symbol in transition
-			if (!rhs.getStateTable().at(from).count(symbol))
-			{
-				return false;
-			}
-
-			// .. and if the destination states are the same
-			for (const std::string &to : p.second)
-			{
-				if (!rhs.getStateTable().at(from).at(symbol).count(to))
-				{
-					return false;
-				}
-			}
+			// There's no transition from current state to new state using this symbol
+			// std::cout << "No transition from " << state << " through " << sym << "\n";
+			return false;
 		}
+
+		// It's possible to transition
+		std::string new_state = Utils::join(m_state_table.at(state).at(sym), "");
+		// std::cout << state << "-> " << sym << " -> " << new_state << "\n";
+		state = new_state;
+
+		if (idx + 1 >= s.size() && !m_states.at(state).isFinal())
+		{
+			// We moved to a new state, but there's nothing else to process &
+			// the new state is not final, so not accepting
+			return false;
+		}
+
+		idx++;
 	}
 
 	return true;
 }
-*/
 
 
 std::set<std::string> FiniteAutomaton::closure(std::set<std::string> states)

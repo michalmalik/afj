@@ -384,7 +384,7 @@ TEST_CASE("New states closure_test_nka.txt", "[closure]")
 	REQUIRE(fa.newStates({ "q0", "q1", "q2", "q3" }, "b") == std::set<std::string>{ "q2", "q3", "q4" });
 }
 
-TEST_CASE("Conversion 1_nka.txt", "[convert]")
+TEST_CASE("Accept 1_nka.txt", "[accept]")
 {
 	NDFiniteAutomaton nka;
 	DFiniteAutomaton dka, dka_test;
@@ -394,10 +394,20 @@ TEST_CASE("Conversion 1_nka.txt", "[convert]")
 
 	convert_to_dfa(nka, dka_test);
 
-	// REQUIRE((dka == dka_test));
+	REQUIRE(dka.accept("abab"));
+	REQUIRE(dka_test.accept("abab"));
+
+	REQUIRE(dka.accept("baba"));
+	REQUIRE(dka_test.accept("baba"));
+
+	REQUIRE(dka.accept("bbbb"));
+	REQUIRE(dka_test.accept("bbbb"));
+
+	REQUIRE(!dka.accept("c"));
+	REQUIRE(!dka_test.accept("c"));
 }
 
-TEST_CASE("Conversion 2_nka.txt", "[convert]")
+TEST_CASE("Accept 2_nka.txt", "[accept]")
 {
 	NDFiniteAutomaton nka;
 	DFiniteAutomaton dka, dka_test;
@@ -407,10 +417,23 @@ TEST_CASE("Conversion 2_nka.txt", "[convert]")
 
 	convert_to_dfa(nka, dka_test);
 
-	// REQUIRE((dka == dka_test));
+	REQUIRE(dka.accept("aaaaa"));
+	REQUIRE(dka_test.accept("aaaaa"));
+
+	REQUIRE(!dka.accept("aabaa"));
+	REQUIRE(!dka_test.accept("aabaa"));
+
+	REQUIRE(!dka.accept("abb"));
+	REQUIRE(!dka_test.accept("abb"));
+
+	REQUIRE(!dka.accept("baa"));
+	REQUIRE(!dka_test.accept("baa"));
+
+	REQUIRE(!dka.accept("c"));
+	REQUIRE(!dka_test.accept("c"));
 }
 
-TEST_CASE("Conversion 3_nka.txt", "[convert]")
+TEST_CASE("Accept 3_nka.txt", "[accept]")
 {
 	NDFiniteAutomaton nka;
 	DFiniteAutomaton dka, dka_test;
@@ -420,7 +443,69 @@ TEST_CASE("Conversion 3_nka.txt", "[convert]")
 
 	convert_to_dfa(nka, dka_test);
 
-	// REQUIRE((dka == dka_test));
+	REQUIRE(dka.accept("aaaab"));
+	REQUIRE(dka_test.accept("aaaab"));
+
+	REQUIRE(dka.accept("ab"));
+	REQUIRE(dka_test.accept("ab"));
+
+	REQUIRE(dka.accept("aab"));
+	REQUIRE(dka_test.accept("aab"));
+
+	REQUIRE(!dka.accept("aabba"));
+	REQUIRE(!dka_test.accept("aabba"));
+
+	REQUIRE(!dka.accept("abb"));
+	REQUIRE(!dka_test.accept("abb"));
+
+	REQUIRE(!dka.accept("b"));
+	REQUIRE(!dka_test.accept("b"));
+}
+
+TEST_CASE("Accept 4_nka.txt", "[accept]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/4_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/4_dka.txt") == FiniteAutomaton::Status::OK);
+
+	convert_to_dfa(nka, dka_test);
+
+	REQUIRE(dka.accept("ccacb"));
+	REQUIRE(dka_test.accept("ccacb"));
+
+	REQUIRE(dka.accept("ab"));
+	REQUIRE(dka_test.accept("ab"));
+
+	REQUIRE(dka.accept("abc"));
+	REQUIRE(dka_test.accept("abc"));
+
+	REQUIRE(dka.accept("abcccccccc"));
+	REQUIRE(dka_test.accept("abcccccccc"));
+
+	REQUIRE(!dka.accept("ccccb"));
+	REQUIRE(!dka_test.accept("ccccb"));
+
+	REQUIRE(!dka.accept("cb"));
+	REQUIRE(!dka_test.accept("cb"));
+}
+
+TEST_CASE("Accept 5_nka.txt", "[accept]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/5_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/5_dka.txt") == FiniteAutomaton::Status::OK);
+
+	convert_to_dfa(nka, dka_test);
+
+	REQUIRE(dka.accept("babab"));
+	REQUIRE(dka_test.accept("babab"));
+
+	REQUIRE(!dka.accept("bacab"));
+	REQUIRE(!dka_test.accept("bacab"));
 }
 
 #endif
