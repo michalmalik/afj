@@ -1,0 +1,20 @@
+5
+3
+q0q1q3 I
+q1q3q2
+q4q5q6q7q8 F
+q7q8q6q10 F
+q9q6q7q8 F
+a
+b
+c
+q0q1q3,a,q4q5q6q7q8
+q0q1q3,c,q1q3q2
+q1q3q2,a,q4q5q6q7q8
+q1q3q2,c,q1q3q2
+q4q5q6q7q8,b,q9q6q7q8
+q4q5q6q7q8,c,q7q8q6q10
+q9q6q7q8,b,q9q6q7q8
+q9q6q7q8,c,q7q8q6q10
+q7q8q6q10,b,q9q6q7q8
+q7q8q6q10,c,q7q8q6q10

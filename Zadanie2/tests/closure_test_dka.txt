@@ -1,0 +1,18 @@
+5
+2
+q0q1 IF
+q0q1q2 F
+q0q1q2q3 F
+q0q1q2q3q4 F
+q3
+a
+b
+q0q1,a,q0q1q2
+q0q1,b,q3
+q0q1q2,a,q0q1q2
+q0q1q2,b,q0q1q2q3q4
+q0q1q2q3,a,q0q1q2
+q0q1q2q3,b,q0q1q2q3q4
+q0q1q2q3q4,a,q0q1q2q3
+q0q1q2q3q4,b,q0q1q2q3q4
+q3,a,q0q1q2
