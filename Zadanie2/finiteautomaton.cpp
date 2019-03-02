@@ -241,7 +241,7 @@ std::set<std::string> FiniteAutomaton::closure(std::set<std::string> states)
 }
 
 
-std::set<std::string> FiniteAutomaton::newStates(const std::set<std::string> &from, const std::string &symbol)
+std::set<std::string> FiniteAutomaton::transitions(const std::set<std::string> &from, const std::string &symbol)
 {
 	std::set<std::string> new_states;
 
@@ -316,6 +316,7 @@ bool FiniteAutomaton::addTransition(const std::string &from, const std::string &
 }
 
 
+#ifdef _TESTS
 std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st)
 {
 	auto state_transitions = m_state_table.find(st);
@@ -336,3 +337,4 @@ std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st
 
 	return transitions;
 }
+#endif // _TESTS

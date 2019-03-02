@@ -54,7 +54,7 @@ public:
 	enum Status
 	{
 		OK,
-		FILE_OPEN_FAILED,
+		FILE_OPEN_FAILED
 	};
 
 	FiniteAutomaton();
@@ -62,9 +62,9 @@ public:
 	/*
 		[number of states]
 		[number of alphabet symbols]
-		[state_1 <I|F>]
+		[state_1 <I|F|IF>]
 		..
-		[state_n <I|F>]
+		[state_n <I|F|IF>]
 		[symbol_1]
 		..
 		[symbol_2]
@@ -84,7 +84,7 @@ public:
 	*/
 
 	std::set<std::string> closure(std::set<std::string> states);
-	std::set<std::string> newStates(const std::set<std::string> &from, const std::string &symbol);
+	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol);
 
 	bool addState(const std::string &label, uint8_t type);
 	void addSymbol(const std::string &symbol);
@@ -96,8 +96,9 @@ public:
 
 	void setAlphabet(const std::set<std::string> &alphabet) { m_alphabet = alphabet; }
 
-	// Mainly used for tests
+#ifdef _TESTS
 	std::set<std::string> getStateTransitions(const std::string &st);
+#endif // _TESTS
 };
 
 

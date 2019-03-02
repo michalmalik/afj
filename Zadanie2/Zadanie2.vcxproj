@@ -182,11 +182,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fautils.cpp" />
     <ClCompile Include="finiteautomaton.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch.hpp" />
+    <ClInclude Include="fautils.hpp" />
     <ClInclude Include="finiteautomaton.hpp" />
     <ClInclude Include="utils.hpp" />
   </ItemGroup>
