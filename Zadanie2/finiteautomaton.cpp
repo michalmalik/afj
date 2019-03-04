@@ -3,7 +3,6 @@
 #include <fstream>
 #include <sstream>
 #include <iterator>
-#include <map>
 #include <vector>
 
 #include "finiteautomaton.hpp"
@@ -211,7 +210,7 @@ bool FiniteAutomaton::accept(const std::string &s)
 }
 
 
-std::set<std::string> FiniteAutomaton::closure(std::set<std::string> states)
+std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &states)
 {
 	std::set<std::string> empty = states;
 
@@ -229,8 +228,7 @@ std::set<std::string> FiniteAutomaton::closure(std::set<std::string> states)
 
 		for (const std::string &s : m_state_table.at(state).at(""))
 		{
-			std::set<std::string> x = closure({ s });
-			for (const std::string &s : x)
+			for (const std::string &s : closure({ s }))
 			{
 				empty.insert(s);
 			}

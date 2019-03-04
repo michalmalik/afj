@@ -77,13 +77,7 @@ public:
 	Status write(const std::string &filename);
 	bool accept(const std::string &s);
 
-	/*
-	Let's not even try :)
-
-	bool operator==(const FiniteAutomaton &rhs);
-	*/
-
-	std::set<std::string> closure(std::set<std::string> states);
+	std::set<std::string> closure(const std::set<std::string> &states);
 	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol);
 
 	bool addState(const std::string &label, uint8_t type);
