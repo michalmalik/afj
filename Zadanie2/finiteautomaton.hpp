@@ -5,6 +5,7 @@
 #include <set>
 
 
+// This is a bit over-complicated for what it does, but eh :)
 struct State
 {
 	enum Type : uint8_t
@@ -59,20 +60,24 @@ public:
 
 	FiniteAutomaton();
 
+	bool operator==(const FiniteAutomaton &rhs);
+
 	/*
-		[number of states]
-		[number of alphabet symbols]
-		[state_1 <I|F|IF>]
-		..
-		[state_n <I|F|IF>]
-		[symbol_1]
-		..
-		[symbol_2]
-		[transition_1]
-		..
-		[transition_n]
-		<EOL>
-	*/
+	Format of input and output file is as follows:
+
+	[number of states]
+	[number of alphabet symbols]
+	[state_1 <I|F|IF>]
+	..
+	[state_n <I|F|IF>]
+	[symbol_1]
+	..
+	[symbol_2]
+	[transition_1]
+	..
+	[transition_n]
+	<EOL>
+*/
 	Status read(const std::string &filename);
 	Status write(const std::string &filename);
 	bool accept(const std::string &s);
@@ -99,6 +104,8 @@ public:
 class NDFiniteAutomaton : public FiniteAutomaton
 {
 public:
+	// This is a little hack because when we read automaton from a file
+	// "epsilon" (empty) symbol is not actually defined, so we just assume it exists
 	NDFiniteAutomaton() : FiniteAutomaton({ "" })
 	{
 		;

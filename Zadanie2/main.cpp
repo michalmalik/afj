@@ -317,6 +317,84 @@ TEST_CASE("Transitions cviko_nka.txt", "[closure]")
 	REQUIRE(fa.transitions({ "q0", "q1", "q2", "q3" }, "b") == std::set<std::string>{ "q2", "q3", "q4" });
 }
 
+TEST_CASE("Convert 1_nka.txt", "[convert]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/1_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/1_dka.txt") == FiniteAutomaton::Status::OK);
+
+	FAUtils::nfa_to_dfa(nka, dka_test);
+
+	REQUIRE((dka == dka_test));
+}
+
+TEST_CASE("Convert 2_nka.txt", "[convert]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/2_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/2_dka.txt") == FiniteAutomaton::Status::OK);
+
+	FAUtils::nfa_to_dfa(nka, dka_test);
+
+	REQUIRE((dka == dka_test));
+}
+
+TEST_CASE("Convert 3_nka.txt", "[convert]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/3_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/3_dka.txt") == FiniteAutomaton::Status::OK);
+
+	FAUtils::nfa_to_dfa(nka, dka_test);
+
+	REQUIRE((dka == dka_test));
+}
+
+TEST_CASE("Convert 4_nka.txt", "[convert]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/4_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/4_dka.txt") == FiniteAutomaton::Status::OK);
+
+	FAUtils::nfa_to_dfa(nka, dka_test);
+
+	REQUIRE((dka == dka_test));
+}
+
+TEST_CASE("Convert 5_nka.txt", "[convert]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/5_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/5_dka.txt") == FiniteAutomaton::Status::OK);
+
+	FAUtils::nfa_to_dfa(nka, dka_test);
+
+	REQUIRE((dka == dka_test));
+}
+
+TEST_CASE("Convert cviko_nka.txt", "[convert]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/cviko_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/cviko_dka.txt") == FiniteAutomaton::Status::OK);
+
+	FAUtils::nfa_to_dfa(nka, dka_test);
+
+	REQUIRE((dka == dka_test));
+}
+
 TEST_CASE("Accept 1_nka.txt", "[accept]")
 {
 	NDFiniteAutomaton nka;
