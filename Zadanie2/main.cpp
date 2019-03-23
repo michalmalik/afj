@@ -2,6 +2,7 @@
 
 #include "fautils.hpp"
 
+
 #ifndef _TESTS
 
 int main(int argc, char **argv)
@@ -15,11 +16,51 @@ int main(int argc, char **argv)
 	std::string in_nfa(argv[1]), out_dfa(argv[2]);
 
 	NDFiniteAutomaton nfa;
-	std::cout << "Load: " << nfa.read(in_nfa) << "\n";
+	if (nfa.read(in_nfa) != FiniteAutomaton::Status::OK)
+	{
+		std::cerr << "Failed to read NFA from \"" << in_nfa << "\"\n";
+		return EXIT_FAILURE;
+	}
+
+	std::cout << "[+] NFA was read from file \"" << in_nfa << "\"\n";
 
 	DFiniteAutomaton dfa;
 	FAUtils::nfa_to_dfa(nfa, dfa);
-	dfa.write(out_dfa);
+	
+	if (dfa.write(out_dfa) != FiniteAutomaton::Status::OK)
+	{
+		std::cerr << "Failed to write DFA to \"" << out_dfa << "\"\n";
+		return EXIT_FAILURE;
+	}
+
+	std::cout << "[+] DFA converted from NFA was written to \"" << out_dfa << "\"\n";
+
+	std::string str;
+	bool valid = false;
+
+	while (true)
+	{
+		do {
+			std::cout << "Enter string to check (exit with Ctrl-C): ";
+			std::cin >> str;
+
+			if (!(valid = std::cin.good()))
+			{
+				std::cout << "Invalid input\n";
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			}
+		} while (!valid);
+
+		if (dfa.accept(str))
+		{
+			std::cout << "ACCEPT\n";
+		}
+		else
+		{
+			std::cout << "REJECT\n";
+		}
+	}
 
 	return EXIT_SUCCESS;
 }

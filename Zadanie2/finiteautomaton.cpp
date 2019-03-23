@@ -22,60 +22,6 @@ FiniteAutomaton::FiniteAutomaton()
 }
 
 
-bool FiniteAutomaton::operator==(const FiniteAutomaton &rhs)
-{
-	// Alphabet has to be the same
-	if (m_alphabet != rhs.getAlphabet())
-	{
-		return false;
-	}
-
-	// Same with number of possible states
-	if (m_states.size() != rhs.getStates().size())
-	{
-		return false;
-	}
-
-	// States that have transitions should also be the same
-	if (m_state_table.size() != rhs.getStateTable().size())
-	{
-		return false;
-	}
-
-	// We take all transition symbols and size of sets of states they transition to
-	// add them to a vector, then sort them. In theory, they should be the same for
-	// equivalent automatons.
-	std::vector<std::string> left, right;
-	for (const auto &p : m_state_table)
-	{
-		for (const auto &x : p.second)
-		{
-			std::string a = x.first + "" + std::to_string(x.second.size());
-			left.push_back(a);
-		}
-	}
-
-	for (const auto &p : rhs.getStateTable())
-	{
-		for (const auto &x : p.second)
-		{
-			std::string a = x.first + "" + std::to_string(x.second.size());
-			right.push_back(a);
-		}
-	}
-
-	std::sort(left.begin(), left.end());
-	std::sort(right.begin(), right.end());
-
-	if (Utils::join(left, "") != Utils::join(right, ""))
-	{
-		return false;
-	}
-
-	return true;
-}
-
-
 FiniteAutomaton::Status FiniteAutomaton::read(const std::string &filename)
 {
 	std::ifstream in_file(filename);
@@ -114,12 +60,15 @@ FiniteAutomaton::Status FiniteAutomaton::read(const std::string &filename)
 		State s;
 		if (type.length() == 2 && (type == "IF" || type == "FI"))
 		{
-			// TODO, do this properly heh
 			s.type = State::Type::INITIAL | State::Type::FINAL;
 		}
-		else if (type.length() == 1)
+		else if (type.length() == 1 && type == "I")
 		{
-			s.type = (type == "I" ? State::Type::INITIAL : State::Type::FINAL);
+			s.type = State::Type::INITIAL;
+		}
+		else if (type.length() == 1 && type == "F")
+		{
+			s.type = State::Type::FINAL;
 		}
 
 		m_states.insert(std::make_pair(label, s));
@@ -390,3 +339,57 @@ std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st
 	return transitions;
 }
 #endif // _TESTS
+
+
+bool DFiniteAutomaton::operator==(const DFiniteAutomaton &rhs)
+{
+	// Alphabet has to be the same
+	if (m_alphabet != rhs.getAlphabet())
+	{
+		return false;
+	}
+
+	// Same with number of possible states
+	if (m_states.size() != rhs.getStates().size())
+	{
+		return false;
+	}
+
+	// States that have transitions should also be the same
+	if (m_state_table.size() != rhs.getStateTable().size())
+	{
+		return false;
+	}
+
+	// We take all transition symbols and size of sets of states they transition to
+	// add them to a vector, then sort them. In theory, they should be the same for
+	// equivalent automatons.
+	std::vector<std::string> left, right;
+	for (const auto &p : m_state_table)
+	{
+		for (const auto &x : p.second)
+		{
+			std::string a = x.first + "" + std::to_string(x.second.size());
+			left.push_back(a);
+		}
+	}
+
+	for (const auto &p : rhs.getStateTable())
+	{
+		for (const auto &x : p.second)
+		{
+			std::string a = x.first + "" + std::to_string(x.second.size());
+			right.push_back(a);
+		}
+	}
+
+	std::sort(left.begin(), left.end());
+	std::sort(right.begin(), right.end());
+
+	if (Utils::join(left, "") != Utils::join(right, ""))
+	{
+		return false;
+	}
+
+	return true;
+}

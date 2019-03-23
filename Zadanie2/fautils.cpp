@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 
-bool FAUtils::nfa_to_dfa(FiniteAutomaton &nfa, FiniteAutomaton &dfa)
+bool FAUtils::nfa_to_dfa(NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 {
 	std::set<std::string> initial_states, final_states;
 	for (const auto &p : nfa.getStates())

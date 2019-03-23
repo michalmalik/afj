@@ -60,8 +60,6 @@ public:
 
 	FiniteAutomaton();
 
-	bool operator==(const FiniteAutomaton &rhs);
-
 	/*
 	Format of input and output file is as follows:
 
@@ -120,4 +118,7 @@ public:
 	{
 		;
 	}
+
+	// This is definitely not correct, but seems OK for our purpose here
+	bool operator==(const DFiniteAutomaton &rhs);
 };
