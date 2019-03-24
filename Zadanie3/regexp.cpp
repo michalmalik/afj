@@ -48,6 +48,7 @@ RegExp RegExp::operator+(RegExp &rhs)
 	std::set<std::string> left_final;
 	size_t left_counter = 0;
 
+	auto &states = new_nfa.getStates();
 	for (const auto & p : m_nfa.getStates())
 	{
 		uint8_t type = p.second.type;
@@ -61,7 +62,7 @@ RegExp RegExp::operator+(RegExp &rhs)
 			left_final.insert(new_q);
 		}
 
-		new_nfa.addState(new_q, type);
+		new_nfa.addState(new_q, type, true);
 	}
 
 	// Transfer left transitions to new automaton
@@ -167,7 +168,7 @@ RegExp RegExp::operator|(RegExp &rhs)
 			old_initial.insert(new_q);
 		}
 
-		new_nfa.addState(new_q, type);
+		new_nfa.addState(new_q, type, true);
 	}
 
 	// Transfer left transitions to new automaton
@@ -268,7 +269,7 @@ RegExp RegExp::operator*(void)
 			finals.insert(p.first);
 		}
 
-		new_nfa.addState(p.first, type);
+		new_nfa.addState(p.first, type, true);
 		++state_counter;
 	}
 
@@ -295,9 +296,9 @@ RegExp RegExp::operator*(void)
 		}
 	}
 
-	// Create new initial state & create epsilon transitions from it to former initial states
+	// Create new initial + final state & create epsilon transitions from it to former initial states
 	std::string new_initial = "q" + std::to_string(state_counter);
-	new_nfa.addState(new_initial, State::INITIAL);
+	new_nfa.addState(new_initial, State::INITIAL | State::FINAL);
 
 	for (const std::string &i : initials)
 	{

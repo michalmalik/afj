@@ -24,7 +24,8 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 
 	dfa.setAlphabet(alphabet);
 
-	std::set<std::string> closed_initial = nfa.closure(initial_states);
+	std::set<std::string> initial_done;
+	std::set<std::string> closed_initial = nfa.closure(initial_states, initial_done);
 
 	uint8_t type = State::Type::INITIAL;
 	if (std::any_of(closed_initial.begin(), closed_initial.end(), [nfa](const std::string &s) { return nfa.getStates().at(s).isFinal(); }))
@@ -45,7 +46,8 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 
 		for (const std::string &symbol : alphabet)
 		{
-			std::set<std::string> to = nfa.closure(nfa.transitions(from, symbol));
+			std::set<std::string> done;
+			std::set<std::string> to = nfa.closure(nfa.transitions(from, symbol), done);
 
 			uint8_t type = State::Type::NONE;
 			if (std::any_of(to.begin(), to.end(), [nfa](const std::string &s) { return nfa.getStates().at(s).isFinal(); }))
@@ -63,20 +65,6 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 			dfa.addTransition(from_str, symbol, to_str);
 		}
 	}
-
-	return true;
-}
-
-
-bool build_regexp_from_file(const std::string &filename)
-{
-	std::ifstream in_file(filename);
-	if (!in_file.is_open())
-	{
-		return false;
-	}
-
-
 
 	return true;
 }

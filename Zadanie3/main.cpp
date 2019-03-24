@@ -2,43 +2,87 @@
 
 #include "regexp.hpp"
 #include "fautils.hpp"
+#include "regexpbuilder.hpp"
+
 
 #ifndef _TESTS
 
 int main(int argc, char **argv)
 {
-	/*
 	if (argc < 3)
 	{
 		std::cerr << "Usage: " << argv[0] << " <in_nfa> <out_dfa>\n";
 		return EXIT_FAILURE;
 	}
 
-	std::string in_nfa(argv[1]), out_dfa(argv[2]);
-	*/
+	std::string in_expressions(argv[1]), out_dfa(argv[2]);
 
-	RegExp a("a"), b("b");
-	RegExp c = a + b;
+	RegExpBuilder reb;
+	RegExpBuilder::Status status = reb.load(in_expressions);
 
-	const NDFiniteAutomaton &nfa = c.getAutomaton();
-	DFiniteAutomaton dfa;
-	FAUtils::nfa_to_dfa(nfa, dfa);
-
-	std::cout << dfa.accept("ab") << "\n";
-
-	for (const auto & p : nfa.getStates())
+	switch (status)
 	{
-		std::cout << p.first << ": " << (int)p.second.type << "\n";
+	case RegExpBuilder::Status::FILE_OPEN_FAILED:
+		{
+			std::cerr << "Failed to open file \"" << in_expressions << "\"\n";
+			return EXIT_FAILURE;
+		}
+	case RegExpBuilder::Status::OK:
+		{
+			break;
+		}
+	default:
+		{
+			__assume(0);
+		}
 	}
 
-	for (const auto & p : nfa.getStateTable())
+	RegExp &r = reb.getFinal();
+	NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	if (FAUtils::nfa_to_dfa(nfa, dfa))
 	{
-		for (const auto & t : p.second)
-		{
-			for (const std::string & to : t.second)
+		std::cout << "[+] Final NFA converted to DFA\n";
+	}
+	else
+	{
+		std::cerr << "Failed to convert final NFA to DFA\n";
+		return EXIT_FAILURE;
+	}
+
+	if (dfa.write(out_dfa) != FiniteAutomaton::Status::OK)
+	{
+		std::cerr << "Failed to write DFA to \"" << out_dfa << "\"\n";
+		return EXIT_FAILURE;
+	}
+
+	std::cout << "[+] DFA written to \"" << out_dfa << "\"\n";
+	
+	std::string str;
+	bool valid = false;
+
+	while (true)
+	{
+		do {
+			std::cout << "Enter string to check (exit with Ctrl-C): ";
+			std::cin >> str;
+
+			if (!(valid = std::cin.good()))
 			{
-				std::cout << p.first << "->" << t.first << "->" << to << "\n";
+				std::cout << "Invalid input\n";
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			}
+		} while (!valid);
+
+		if (dfa.accept(str))
+		{
+			std::cout << "ACCEPT\n";
+		}
+		else
+		{
+			std::cout << "REJECT\n";
 		}
 	}
 
@@ -232,7 +276,7 @@ TEST_CASE("Iteration + concat ab*")
 	REQUIRE(nfa.getStates().at("q0").isInitial());
 	REQUIRE(nfa.getStates().at("q1").type == State::NONE);
 	REQUIRE(nfa.getStates().at("q2").type == State::NONE);
-	REQUIRE(nfa.getStates().at("q4").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q4").isFinal());
 	REQUIRE(nfa.getStates().at("q3").isFinal());
 
 	auto q0 = nfa.getStateTransitions("q0");
@@ -255,7 +299,7 @@ TEST_CASE("Iteration + concat ab*")
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 	REQUIRE(dfa.accept("ab"));
 	REQUIRE(dfa.accept("abbbbbbbbbb"));
-	REQUIRE(!dfa.accept("a"));
+	REQUIRE(dfa.accept("a"));
 	REQUIRE(!dfa.accept("b"));
 }
 
@@ -266,8 +310,6 @@ TEST_CASE("Iteration + concat a*b")
 	RegExp r = ai + b;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
-
-	nfa.write("nfa.txt");
 
 	REQUIRE(nfa.getStates().size() == 5);
 	REQUIRE(nfa.getStates().at("q2").isInitial());
@@ -284,8 +326,9 @@ TEST_CASE("Iteration + concat a*b")
 	REQUIRE(q1.count("q1->->q0"));
 	REQUIRE(q1.count("q1->->q3"));
 	auto q2 = nfa.getStateTransitions("q2");
-	REQUIRE(q2.size() == 1);
+	REQUIRE(q2.size() == 2);
 	REQUIRE(q2.count("q2->->q0"));
+	REQUIRE(q2.count("q2->->q3"));
 	auto q3 = nfa.getStateTransitions("q3");
 	REQUIRE(q3.size() == 1);
 	REQUIRE(q3.count("q3->b->q4"));
@@ -299,7 +342,7 @@ TEST_CASE("Iteration + concat a*b")
 	REQUIRE(dfa.accept("aaaaaaaaab"));
 	REQUIRE(!dfa.accept("a"));
 	REQUIRE(!dfa.accept("aaaaaabbbbb"));
-	REQUIRE(!dfa.accept("b"));
+	REQUIRE(dfa.accept("b"));
 }
 
 TEST_CASE("Iteration + concat (ab)*")
@@ -352,6 +395,34 @@ TEST_CASE("Iteration + union (a|b)*")
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
 
+	REQUIRE(nfa.getStates().size() == 6);
+	REQUIRE(nfa.getStates().at("q5").isInitial());
+	REQUIRE(nfa.getStates().at("q0").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q1").isFinal());
+	REQUIRE(nfa.getStates().at("q2").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q3").isFinal());
+	REQUIRE(nfa.getStates().at("q4").type == State::NONE);
+
+	auto q5 = nfa.getStateTransitions("q5");
+	REQUIRE(q5.size() == 1);
+	REQUIRE(q5.count("q5->->q4"));
+	auto q4 = nfa.getStateTransitions("q4");
+	REQUIRE(q4.size() == 2);
+	REQUIRE(q4.count("q4->->q0"));
+	REQUIRE(q4.count("q4->->q2"));
+	auto q3 = nfa.getStateTransitions("q3");
+	REQUIRE(q3.size() == 1);
+	REQUIRE(q3.count("q3->->q4"));
+	auto q2 = nfa.getStateTransitions("q2");
+	REQUIRE(q2.size() == 1);
+	REQUIRE(q2.count("q2->b->q3"));
+	auto q1 = nfa.getStateTransitions("q1");
+	REQUIRE(q1.size() == 1);
+	REQUIRE(q1.count("q1->->q4"));
+	auto q0 = nfa.getStateTransitions("q0");
+	REQUIRE(q0.size() == 1);
+	REQUIRE(q0.count("q0->a->q1"));
+
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 	REQUIRE(dfa.accept("a"));
@@ -379,10 +450,24 @@ TEST_CASE("Iteration + union a|b*")
 	REQUIRE(!dfa.accept("ba"));
 }
 
-/*
-TEST_CASE("Compound ab*(c|E)")
+TEST_CASE("Compound (E | ba)*c")
 {
-	// This regular expression cannot be made into a DFA
+	RegExp a("a"), b("b"), c("c"), e("");
+	RegExp ba = b + a;
+	RegExp x1 = e | ba;
+	RegExp x1i = *x1;
+	RegExp r = x1i + c;
+
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+
+	DFiniteAutomaton dfa;
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("bac"));
+	REQUIRE(!dfa.accept("ba"));
+}
+
+TEST_CASE("Compound ab*(c|E) -- wikipedia Regular Expressions")
+{
 	RegExp a("a"), b("b");
 	RegExp bi = *b;
 	RegExp x1 = a + bi;
@@ -396,12 +481,43 @@ TEST_CASE("Compound ab*(c|E)")
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 	REQUIRE(dfa.accept("ab"));
+	REQUIRE(dfa.accept("ac"));
 	REQUIRE(dfa.accept("abc"));
 	REQUIRE(dfa.accept("abbbbc"));
 	REQUIRE(!dfa.accept("aba"));
 }
 
-TEST_CASE("Compound c*a(b|c)*")
+TEST_CASE("Compound (a|(b(ab*a)*b))* -- wikipedia Regular Expressions")
+{
+	RegExp a("a"), b("b");
+	RegExp bi = *b;
+	RegExp abi = a + bi;
+	RegExp abia = abi + a;
+	RegExp abiai = *abia;
+
+	RegExp x1 = b + abiai + b;
+	RegExp x = a | x1;
+	RegExp r = *x;
+
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+
+	DFiniteAutomaton dfa;
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("a"));
+	REQUIRE(dfa.accept("aa"));
+	REQUIRE(dfa.accept("bb"));
+	REQUIRE(dfa.accept("aaa"));
+	REQUIRE(dfa.accept("abb"));
+	REQUIRE(dfa.accept("bba"));
+	REQUIRE(dfa.accept("aaaa"));
+	REQUIRE(dfa.accept("aabb"));
+	REQUIRE(dfa.accept("abba"));
+	REQUIRE(dfa.accept("baab"));
+	REQUIRE(dfa.accept("bbaa"));
+	REQUIRE(dfa.accept("bbbb"));
+}
+
+TEST_CASE("Compound c*a(b|c)* -- zadanie 2, priklad 4")
 {
 	RegExp a("a"), b("b"), c("c");
 	RegExp ci = *c;
@@ -417,6 +533,173 @@ TEST_CASE("Compound c*a(b|c)*")
 	REQUIRE(dfa.accept("ccacb"));
 	REQUIRE(!dfa.accept("ccccb"));
 }
-*/
+
+TEST_CASE("Compound ((ba)* | (ca)*)bb* -- zadanie 2, priklad 5")
+{
+	RegExp a("a"), b("b"), c("c");
+	RegExp ba = b + a;
+	RegExp ca = c + a;
+	RegExp bi = *b;
+	
+	RegExp bai = *ba;
+	RegExp cai = *ca;
+	RegExp x1 = bai | cai;
+	RegExp x = x1 + b;
+	RegExp r = x + bi;
+
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+
+	DFiniteAutomaton dfa;
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("babab"));
+	REQUIRE(!dfa.accept("bacab"));
+}
+
+TEST_CASE("Builder 1.txt -- aa*")
+{
+	RegExpBuilder reb;
+	REQUIRE(reb.load("tests/1.txt") == RegExpBuilder::Status::OK);
+
+	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(nfa.getStates().size() == 5);
+	REQUIRE(nfa.getStates().at("q0").isInitial());
+	REQUIRE(nfa.getStates().at("q1").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q2").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q4").isFinal());
+	REQUIRE(nfa.getStates().at("q3").isFinal());
+
+	auto q0 = nfa.getStateTransitions("q0");
+	REQUIRE(q0.size() == 1);
+	REQUIRE(q0.count("q0->a->q1"));
+	auto q1 = nfa.getStateTransitions("q1");
+	REQUIRE(q1.size() == 1);
+	REQUIRE(q1.count("q1->->q4"));
+	auto q2 = nfa.getStateTransitions("q2");
+	REQUIRE(q2.size() == 1);
+	REQUIRE(q2.count("q2->a->q3"));
+	auto q3 = nfa.getStateTransitions("q3");
+	REQUIRE(q3.size() == 1);
+	REQUIRE(q3.count("q3->->q2"));
+	auto q4 = nfa.getStateTransitions("q4");
+	REQUIRE(q4.size() == 1);
+	REQUIRE(q4.count("q4->->q2"));
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("aa"));
+	REQUIRE(dfa.accept("aaaa"));
+	REQUIRE(dfa.accept("a"));
+}
+
+TEST_CASE("Builder 2.txt -- E|ab")
+{
+	RegExpBuilder reb;
+	REQUIRE(reb.load("tests/2.txt") == RegExpBuilder::Status::OK);
+
+	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(nfa.getStates().size() == 6);
+	REQUIRE(nfa.getStates().at("q5").isInitial());
+	REQUIRE(nfa.getStates().at("q1").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q2").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q3").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q4").isFinal());
+	REQUIRE(nfa.getStates().at("q0").isFinal());
+
+	auto q0 = nfa.getStateTransitions("q0");
+	REQUIRE(q0.size() == 0);
+	auto q1 = nfa.getStateTransitions("q1");
+	REQUIRE(q1.size() == 1);
+	REQUIRE(q1.count("q1->a->q2"));
+	auto q2 = nfa.getStateTransitions("q2");
+	REQUIRE(q2.size() == 1);
+	REQUIRE(q2.count("q2->->q3"));
+	auto q3 = nfa.getStateTransitions("q3");
+	REQUIRE(q3.size() == 1);
+	REQUIRE(q3.count("q3->b->q4"));
+	auto q4 = nfa.getStateTransitions("q4");
+	REQUIRE(q4.size() == 0);
+	auto q5 = nfa.getStateTransitions("q5");
+	REQUIRE(q5.size() == 2);
+	REQUIRE(q5.count("q5->->q0"));
+	REQUIRE(q5.count("q5->->q1"));
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("ab"));
+	REQUIRE(!dfa.accept("aa"));
+}
+
+TEST_CASE("Builder 3.txt -- (a|b)*")
+{
+	RegExpBuilder reb;
+	REQUIRE(reb.load("tests/3.txt") == RegExpBuilder::Status::OK);
+
+	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(nfa.getStates().size() == 6);
+	REQUIRE(nfa.getStates().at("q5").isInitial());
+	REQUIRE(nfa.getStates().at("q0").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q1").isFinal());
+	REQUIRE(nfa.getStates().at("q2").type == State::NONE);
+	REQUIRE(nfa.getStates().at("q3").isFinal());
+	REQUIRE(nfa.getStates().at("q4").type == State::NONE);
+
+	auto q5 = nfa.getStateTransitions("q5");
+	REQUIRE(q5.size() == 1);
+	REQUIRE(q5.count("q5->->q4"));
+	auto q4 = nfa.getStateTransitions("q4");
+	REQUIRE(q4.size() == 2);
+	REQUIRE(q4.count("q4->->q0"));
+	REQUIRE(q4.count("q4->->q2"));
+	auto q3 = nfa.getStateTransitions("q3");
+	REQUIRE(q3.size() == 1);
+	REQUIRE(q3.count("q3->->q4"));
+	auto q2 = nfa.getStateTransitions("q2");
+	REQUIRE(q2.size() == 1);
+	REQUIRE(q2.count("q2->b->q3"));
+	auto q1 = nfa.getStateTransitions("q1");
+	REQUIRE(q1.size() == 1);
+	REQUIRE(q1.count("q1->->q4"));
+	auto q0 = nfa.getStateTransitions("q0");
+	REQUIRE(q0.size() == 1);
+	REQUIRE(q0.count("q0->a->q1"));
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("a"));
+	REQUIRE(dfa.accept("b"));
+	REQUIRE(dfa.accept("ab"));
+	REQUIRE(dfa.accept("ba"));
+	REQUIRE(dfa.accept("aa"));
+	REQUIRE(dfa.accept("bb"));
+}
+
+TEST_CASE("Builder 4.txt -- (E|ba)*c")
+{
+	RegExpBuilder reb;
+	REQUIRE(reb.load("tests/4.txt") == RegExpBuilder::Status::OK);
+
+	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("bac"));
+	REQUIRE(!dfa.accept("ba"));
+}
+
+TEST_CASE("Builder 5.txt -- ((acb)*|E)a*b")
+{
+	RegExpBuilder reb;
+	REQUIRE(reb.load("tests/5.txt") == RegExpBuilder::Status::OK);
+
+	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("acbaaab"));
+	REQUIRE(!dfa.accept("acbaaabbb"));
+}
 
 #endif // _TESTS

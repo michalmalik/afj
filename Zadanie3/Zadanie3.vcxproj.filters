@@ -27,6 +27,9 @@
     <ClCompile Include="regexp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="regexpbuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fautils.hpp">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="regexp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="regexpbuilder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

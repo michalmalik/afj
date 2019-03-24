@@ -161,7 +161,7 @@ FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename) cons
 }
 
 
-bool FiniteAutomaton::accept(const std::string &s)
+bool FiniteAutomaton::accept(const std::string &s) const
 {
 	auto it = std::find_if(m_states.begin(), m_states.end(), [](const std::pair<std::string, State> &p) -> bool {
 		return p.second.isInitial();
@@ -173,7 +173,6 @@ bool FiniteAutomaton::accept(const std::string &s)
 	}
 
 	std::string state = (*it).first;
-	// std::cout << "Initial state: " << state << "\n";
 
 	size_t idx = 0;
 	while (idx < s.size())
@@ -181,7 +180,6 @@ bool FiniteAutomaton::accept(const std::string &s)
 		if (!m_state_table.count(state))
 		{
 			// State has no transitions
-			// std::cout << "No transition from " << state << "\n";
 			return false;
 		}
 
@@ -190,13 +188,11 @@ bool FiniteAutomaton::accept(const std::string &s)
 		if (!m_state_table.at(state).count(sym))
 		{
 			// There's no transition from current state to new state using this symbol
-			// std::cout << "No transition from " << state << " through " << sym << "\n";
 			return false;
 		}
 
 		// It's possible to transition
 		std::string new_state = Utils::join(m_state_table.at(state).at(sym), "");
-		// std::cout << state << "-> " << sym << " -> " << new_state << "\n";
 		state = new_state;
 
 		if (idx + 1 >= s.size() && !m_states.at(state).isFinal())
@@ -213,7 +209,7 @@ bool FiniteAutomaton::accept(const std::string &s)
 }
 
 
-std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &states) const
+std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &states, std::set<std::string> &done) const
 {
 	std::set<std::string> empty = states;
 
@@ -229,9 +225,16 @@ std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &stat
 			continue;
 		}
 
-		for (const std::string &s : m_state_table.at(state).at(""))
+		for (const std::string &x : m_state_table.at(state).at(""))
 		{
-			for (const std::string &s : closure({ s }))
+			if (done.count(x))
+			{
+				continue;
+			}
+
+			done.insert(x);
+
+			for (const std::string &s : closure({ x }, done))
 			{
 				empty.insert(s);
 			}
@@ -268,17 +271,17 @@ std::set<std::string> FiniteAutomaton::transitions(const std::set<std::string> &
 }
 
 
-bool FiniteAutomaton::addState(const std::string &label, uint8_t type)
+bool FiniteAutomaton::addState(const std::string &label, uint8_t type, bool mod)
 {
 	if (m_states.count(label))
 	{
-		if (m_states.at(label) == type)
+		if (mod)
 		{
-			return false;
+			m_states[label] = type;
+			return true;
 		}
 
-		m_states[label] = type;
-		return true;
+		return false;
 	}
 
 	m_states.insert(std::make_pair(label, State(type)));

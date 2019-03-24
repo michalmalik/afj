@@ -178,12 +178,14 @@
     <ClCompile Include="finiteautomaton.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="regexp.cpp" />
+    <ClCompile Include="regexpbuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="catch.hpp" />
     <ClInclude Include="fautils.hpp" />
     <ClInclude Include="finiteautomaton.hpp" />
     <ClInclude Include="regexp.hpp" />
+    <ClInclude Include="regexpbuilder.hpp" />
     <ClInclude Include="utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

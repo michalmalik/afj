@@ -75,15 +75,20 @@ public:
 	..
 	[transition_n]
 	<EOL>
-*/
+	*/
+
+	// TODO: read should be only in NDFiniteAutomaton
+	// TODO: write should be only in DFiniteAutomaton
 	Status read(const std::string &filename);
 	Status write(const std::string &filename) const;
-	bool accept(const std::string &s);
 
-	std::set<std::string> closure(const std::set<std::string> &states) const;
+	// TODO: This should be only in DFiniteAutomaton
+	bool accept(const std::string &s) const;
+
+	std::set<std::string> closure(const std::set<std::string> &states, std::set<std::string> &done) const;
 	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol) const;
 
-	bool addState(const std::string &label, uint8_t type);
+	bool addState(const std::string &label, uint8_t type, bool mod = false);
 	void addSymbol(const std::string &symbol);
 	bool addTransition(const std::string &from, const std::string &symbol, const std::string &to);
 
