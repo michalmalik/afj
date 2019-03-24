@@ -75,13 +75,13 @@ public:
 	..
 	[transition_n]
 	<EOL>
-*/
+	*/
 	Status read(const std::string &filename);
-	Status write(const std::string &filename);
+	Status write(const std::string &filename) const;
 	bool accept(const std::string &s);
 
-	std::set<std::string> closure(const std::set<std::string> &states);
-	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol);
+	std::set<std::string> closure(const std::set<std::string> &states, std::set<std::string> &done) const;
+	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol) const;
 
 	bool addState(const std::string &label, uint8_t type);
 	void addSymbol(const std::string &symbol);
@@ -94,7 +94,7 @@ public:
 	void setAlphabet(const std::set<std::string> &alphabet) { m_alphabet = alphabet; }
 
 #ifdef _TESTS
-	std::set<std::string> getStateTransitions(const std::string &st);
+	std::set<std::string> getStateTransitions(const std::string &st) const;
 #endif // _TESTS
 };
 

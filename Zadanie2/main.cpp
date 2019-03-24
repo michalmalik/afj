@@ -333,12 +333,13 @@ TEST_CASE("Closure cviko_nka.txt", "[closure]")
 	NDFiniteAutomaton fa;
 
 	REQUIRE(fa.read("tests/cviko_nka.txt") == FiniteAutomaton::Status::OK);
-	REQUIRE(fa.closure({ "q0" }) == std::set<std::string>{ "q0", "q1" });
-	REQUIRE(fa.closure({ "q1", "q2" }) == std::set<std::string>{ "q0", "q1", "q2" });
-	REQUIRE(fa.closure({ "q3" }) == std::set<std::string>{ "q3" });
-	REQUIRE(fa.closure({ "q2", "q3", "q4" }) == std::set<std::string>{ "q0", "q1", "q2", "q3", "q4" });
-	REQUIRE(fa.closure({ }) == std::set<std::string>{ });
-	REQUIRE(fa.closure({ "q1", "q2", "q3" }) == std::set<std::string>{ "q0", "q1", "q2", "q3" });
+	std::set<std::string> d1, d2, d3, d4, d5, d6;
+	REQUIRE(fa.closure({ "q0" }, d1) == std::set<std::string>{ "q0", "q1" });
+	REQUIRE(fa.closure({ "q1", "q2" }, d2) == std::set<std::string>{ "q0", "q1", "q2" });
+	REQUIRE(fa.closure({ "q3" }, d3) == std::set<std::string>{ "q3" });
+	REQUIRE(fa.closure({ "q2", "q3", "q4" }, d4) == std::set<std::string>{ "q0", "q1", "q2", "q3", "q4" });
+	REQUIRE(fa.closure({ }, d5) == std::set<std::string>{ });
+	REQUIRE(fa.closure({ "q1", "q2", "q3" }, d6) == std::set<std::string>{ "q0", "q1", "q2", "q3" });
 }
 
 TEST_CASE("Transitions cviko_nka.txt", "[closure]")
@@ -560,7 +561,7 @@ TEST_CASE("Accept 5_nka.txt", "[accept]")
 	REQUIRE(!dka_test.accept("bacab"));
 }
 
-TEST_CASE("Accept closure_test_nka.txt", "[accept]")
+TEST_CASE("Accept cviko_nka.txt", "[accept]")
 {
 	NDFiniteAutomaton nka;
 	DFiniteAutomaton dka, dka_test;
@@ -587,6 +588,32 @@ TEST_CASE("Accept closure_test_nka.txt", "[accept]")
 
 	REQUIRE(!dka.accept("bbb"));
 	REQUIRE(!dka_test.accept("bbb"));
+}
+
+TEST_CASE("Accept closure_loop.txt", "[accept]")
+{
+	NDFiniteAutomaton nka;
+	DFiniteAutomaton dka, dka_test;
+
+	REQUIRE(nka.read("tests/closure_loop_nka.txt") == FiniteAutomaton::Status::OK);
+	REQUIRE(dka.read("tests/closure_loop_dka.txt") == FiniteAutomaton::Status::OK);
+
+	FAUtils::nfa_to_dfa(nka, dka_test);
+
+	REQUIRE(dka.accept("c"));
+	REQUIRE(dka_test.accept("c"));
+
+	REQUIRE(dka.accept("bac"));
+	REQUIRE(dka_test.accept("bac"));
+
+	REQUIRE(dka.accept("babababac"));
+	REQUIRE(dka_test.accept("babababac"));
+
+	REQUIRE(!dka.accept("ba"));
+	REQUIRE(!dka_test.accept("ba"));
+
+	REQUIRE(!dka.accept("babababaac"));
+	REQUIRE(!dka_test.accept("babababaac"));
 }
 
 #endif

@@ -1,11 +1,12 @@
 #include <algorithm>
 #include <queue>
+#include <fstream>
 
 #include "fautils.hpp"
 #include "utils.hpp"
 
 
-bool FAUtils::nfa_to_dfa(NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
+bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 {
 	std::set<std::string> initial_states, final_states;
 	for (const auto &p : nfa.getStates())
@@ -23,7 +24,8 @@ bool FAUtils::nfa_to_dfa(NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 
 	dfa.setAlphabet(alphabet);
 
-	std::set<std::string> closed_initial = nfa.closure(initial_states);
+	std::set<std::string> initial_done;
+	std::set<std::string> closed_initial = nfa.closure(initial_states, initial_done);
 
 	uint8_t type = State::Type::INITIAL;
 	if (std::any_of(closed_initial.begin(), closed_initial.end(), [nfa](const std::string &s) { return nfa.getStates().at(s).isFinal(); }))
@@ -44,7 +46,8 @@ bool FAUtils::nfa_to_dfa(NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 
 		for (const std::string &symbol : alphabet)
 		{
-			std::set<std::string> to = nfa.closure(nfa.transitions(from, symbol));
+			std::set<std::string> done;
+			std::set<std::string> to = nfa.closure(nfa.transitions(from, symbol), done);
 
 			uint8_t type = State::Type::NONE;
 			if (std::any_of(to.begin(), to.end(), [nfa](const std::string &s) { return nfa.getStates().at(s).isFinal(); }))

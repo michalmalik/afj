@@ -108,7 +108,7 @@ FiniteAutomaton::Status FiniteAutomaton::read(const std::string &filename)
 }
 
 
-FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename)
+FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename) const
 {
 	std::ofstream out_file(filename, std::ios::trunc);
 	if (!out_file.is_open())
@@ -213,7 +213,7 @@ bool FiniteAutomaton::accept(const std::string &s)
 }
 
 
-std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &states)
+std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &states, std::set<std::string> &done) const
 {
 	std::set<std::string> empty = states;
 
@@ -229,9 +229,16 @@ std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &stat
 			continue;
 		}
 
-		for (const std::string &s : m_state_table.at(state).at(""))
+		for (const std::string &x : m_state_table.at(state).at(""))
 		{
-			for (const std::string &s : closure({ s }))
+			if (done.count(x))
+			{
+				continue;
+			}
+
+			done.insert(x);
+
+			for (const std::string &s : closure({ x }, done))
 			{
 				empty.insert(s);
 			}
@@ -242,7 +249,7 @@ std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &stat
 }
 
 
-std::set<std::string> FiniteAutomaton::transitions(const std::set<std::string> &from, const std::string &symbol)
+std::set<std::string> FiniteAutomaton::transitions(const std::set<std::string> &from, const std::string &symbol) const
 {
 	std::set<std::string> new_states;
 
@@ -318,7 +325,7 @@ bool FiniteAutomaton::addTransition(const std::string &from, const std::string &
 
 
 #ifdef _TESTS
-std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st)
+std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st) const
 {
 	auto state_transitions = m_state_table.find(st);
 	if (state_transitions == m_state_table.end())
