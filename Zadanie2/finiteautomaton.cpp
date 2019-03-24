@@ -275,10 +275,16 @@ std::set<std::string> FiniteAutomaton::transitions(const std::set<std::string> &
 }
 
 
-bool FiniteAutomaton::addState(const std::string &label, uint8_t type)
+bool FiniteAutomaton::addState(const std::string &label, uint8_t type, bool mod)
 {
 	if (m_states.count(label))
 	{
+		if (mod)
+		{
+			m_states[label] = type;
+			return true;
+		}
+
 		return false;
 	}
 

@@ -83,7 +83,7 @@ public:
 	std::set<std::string> closure(const std::set<std::string> &states, std::set<std::string> &done) const;
 	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol) const;
 
-	bool addState(const std::string &label, uint8_t type);
+	bool addState(const std::string &label, uint8_t type, bool mod = false);
 	void addSymbol(const std::string &symbol);
 	bool addTransition(const std::string &from, const std::string &symbol, const std::string &to);
 
