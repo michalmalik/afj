@@ -213,7 +213,7 @@ bool FiniteAutomaton::accept(const std::string &s)
 }
 
 
-std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &states)
+std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &states) const
 {
 	std::set<std::string> empty = states;
 
@@ -242,7 +242,7 @@ std::set<std::string> FiniteAutomaton::closure(const std::set<std::string> &stat
 }
 
 
-std::set<std::string> FiniteAutomaton::transitions(const std::set<std::string> &from, const std::string &symbol)
+std::set<std::string> FiniteAutomaton::transitions(const std::set<std::string> &from, const std::string &symbol) const
 {
 	std::set<std::string> new_states;
 

@@ -1,11 +1,11 @@
 #pragma once
 
+#include "regexp.hpp"
 #include "finiteautomaton.hpp"
 
 
-// The only point of this namespace is the fact that we expect
-// more utilities to go here
 namespace FAUtils
 {
-	bool nfa_to_dfa(NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa);
+	bool nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa);
+	bool build_regexp_from_file(const std::string &filename);
 }

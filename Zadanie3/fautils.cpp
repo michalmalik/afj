@@ -1,11 +1,12 @@
 #include <algorithm>
 #include <queue>
+#include <fstream>
 
 #include "fautils.hpp"
 #include "utils.hpp"
 
 
-bool FAUtils::nfa_to_dfa(NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
+bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 {
 	std::set<std::string> initial_states, final_states;
 	for (const auto &p : nfa.getStates())
@@ -62,6 +63,20 @@ bool FAUtils::nfa_to_dfa(NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 			dfa.addTransition(from_str, symbol, to_str);
 		}
 	}
+
+	return true;
+}
+
+
+bool build_regexp_from_file(const std::string &filename)
+{
+	std::ifstream in_file(filename);
+	if (!in_file.is_open())
+	{
+		return false;
+	}
+
+
 
 	return true;
 }

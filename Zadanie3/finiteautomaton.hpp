@@ -80,8 +80,8 @@ public:
 	Status write(const std::string &filename);
 	bool accept(const std::string &s);
 
-	std::set<std::string> closure(const std::set<std::string> &states);
-	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol);
+	std::set<std::string> closure(const std::set<std::string> &states) const;
+	std::set<std::string> transitions(const std::set<std::string> &from, const std::string &symbol) const;
 
 	bool addState(const std::string &label, uint8_t type);
 	void addSymbol(const std::string &symbol);

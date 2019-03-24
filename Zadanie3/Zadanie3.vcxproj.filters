@@ -24,6 +24,9 @@
     <ClCompile Include="fautils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="regexp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fautils.hpp">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="catch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="regexp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
