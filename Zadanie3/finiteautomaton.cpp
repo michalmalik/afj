@@ -108,7 +108,7 @@ FiniteAutomaton::Status FiniteAutomaton::read(const std::string &filename)
 }
 
 
-FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename)
+FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename) const
 {
 	std::ofstream out_file(filename, std::ios::trunc);
 	if (!out_file.is_open())
@@ -272,7 +272,13 @@ bool FiniteAutomaton::addState(const std::string &label, uint8_t type)
 {
 	if (m_states.count(label))
 	{
-		return false;
+		if (m_states.at(label) == type)
+		{
+			return false;
+		}
+
+		m_states[label] = type;
+		return true;
 	}
 
 	m_states.insert(std::make_pair(label, State(type)));
@@ -318,7 +324,7 @@ bool FiniteAutomaton::addTransition(const std::string &from, const std::string &
 
 
 #ifdef _TESTS
-std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st)
+std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st) const
 {
 	auto state_transitions = m_state_table.find(st);
 	if (state_transitions == m_state_table.end())

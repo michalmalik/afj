@@ -1,9 +1,0 @@
-3
-2
-q0 I
-q0nq1
-q1n F
-a
-b
-q0,a,q0nq1
-q0nq1,b,q1n

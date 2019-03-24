@@ -9,22 +9,23 @@
 class RegExp
 {
 public:
-	explicit RegExp();
+	RegExp();
+	RegExp(const std::string &symbol);
 
 	// Concatenation
 	RegExp operator+(RegExp &rhs);
 
-	// Iteration
-	RegExp operator*(void);
-
 	// Union
 	RegExp operator|(RegExp &rhs);
 
-	bool createElementary(const std::string &symbol);
-	bool createElementary(const std::set<std::string> &symbol);
+	// Iteration
+	RegExp operator*(void);
 
+	bool empty() const { return m_nfa.getStates().size() == 0; }
 	NDFiniteAutomaton &getAutomaton() { return m_nfa; }
 
 private:
+	bool build(const std::set<std::string> &symbol);
+
 	NDFiniteAutomaton m_nfa;
 };
