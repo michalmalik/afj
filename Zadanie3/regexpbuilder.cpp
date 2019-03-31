@@ -26,6 +26,13 @@ RegExpBuilder::Status RegExpBuilder::load(const std::string &filename)
 		lines.push_back(line);
 	}
 
+	if (lines.empty())
+	{
+		// In case of an empty file
+		m_expressions.push_back(RegExp());
+		return Status::OK;
+	}
+
 	for (const std::string &l : lines)
 	{
 		if (l.empty())

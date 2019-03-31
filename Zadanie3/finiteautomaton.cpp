@@ -42,8 +42,8 @@ FiniteAutomaton::Status FiniteAutomaton::read(const std::string &filename)
 
 	in_file.close();
 
-	int num_states = std::stoi(lines[0]);
-	int num_symbols = std::stoi(lines[1]);
+	const int num_states = std::stoi(lines[0]);
+	const int num_symbols = std::stoi(lines[1]);
 	int end = 2;
 
 	// Load states
@@ -163,7 +163,7 @@ FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename) cons
 
 bool FiniteAutomaton::accept(const std::string &s) const
 {
-	auto it = std::find_if(m_states.begin(), m_states.end(), [](const std::pair<std::string, State> &p) -> bool {
+	const auto it = std::find_if(m_states.begin(), m_states.end(), [](const std::pair<std::string, State> &p) -> bool {
 		return p.second.isInitial();
 	});
 
@@ -183,7 +183,7 @@ bool FiniteAutomaton::accept(const std::string &s) const
 			return false;
 		}
 
-		std::string sym(1, s[idx]);
+		const std::string sym(1, s[idx]);
 
 		if (!m_state_table.at(state).count(sym))
 		{
@@ -329,7 +329,7 @@ bool FiniteAutomaton::addTransition(const std::string &from, const std::string &
 #ifdef _TESTS
 std::set<std::string> FiniteAutomaton::getStateTransitions(const std::string &st) const
 {
-	auto state_transitions = m_state_table.find(st);
+	const auto state_transitions = m_state_table.find(st);
 	if (state_transitions == m_state_table.end())
 	{
 		return std::set<std::string>{};

@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	}
 
 	RegExp &r = reb.getFinal();
-	NDFiniteAutomaton &nfa = r.getAutomaton();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
 	DFiniteAutomaton dfa;
 
 	if (FAUtils::nfa_to_dfa(nfa, dfa))
@@ -555,12 +555,26 @@ TEST_CASE("Compound ((ba)* | (ca)*)bb* -- zadanie 2, priklad 5")
 	REQUIRE(!dfa.accept("bacab"));
 }
 
+TEST_CASE("Builder nothing.txt -- literal void")
+{
+	RegExpBuilder reb;
+	REQUIRE(reb.load("tests/nothing.txt") == RegExpBuilder::Status::OK);
+	REQUIRE(reb.getExpressions().size() == 1);
+
+	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	DFiniteAutomaton dfa;
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(!dfa.accept("a"));
+	REQUIRE(!dfa.accept("b"));
+}
+
 TEST_CASE("Builder 1.txt -- aa*")
 {
 	RegExpBuilder reb;
 	REQUIRE(reb.load("tests/1.txt") == RegExpBuilder::Status::OK);
+	REQUIRE(reb.getExpressions().size() == 3);
 
-	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
 	DFiniteAutomaton dfa;
 
 	REQUIRE(nfa.getStates().size() == 5);
@@ -596,8 +610,9 @@ TEST_CASE("Builder 2.txt -- E|ab")
 {
 	RegExpBuilder reb;
 	REQUIRE(reb.load("tests/2.txt") == RegExpBuilder::Status::OK);
+	REQUIRE(reb.getExpressions().size() == 5);
 
-	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
 	DFiniteAutomaton dfa;
 
 	REQUIRE(nfa.getStates().size() == 6);
@@ -635,8 +650,9 @@ TEST_CASE("Builder 3.txt -- (a|b)*")
 {
 	RegExpBuilder reb;
 	REQUIRE(reb.load("tests/3.txt") == RegExpBuilder::Status::OK);
+	REQUIRE(reb.getExpressions().size() == 4);
 
-	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
 	DFiniteAutomaton dfa;
 
 	REQUIRE(nfa.getStates().size() == 6);
@@ -680,8 +696,9 @@ TEST_CASE("Builder 4.txt -- (E|ba)*c")
 {
 	RegExpBuilder reb;
 	REQUIRE(reb.load("tests/4.txt") == RegExpBuilder::Status::OK);
+	REQUIRE(reb.getExpressions().size() == 8);
 
-	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
 	DFiniteAutomaton dfa;
 
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
@@ -693,8 +710,9 @@ TEST_CASE("Builder 5.txt -- ((acb)*|E)a*b")
 {
 	RegExpBuilder reb;
 	REQUIRE(reb.load("tests/5.txt") == RegExpBuilder::Status::OK);
+	REQUIRE(reb.getExpressions().size() == 13);
 
-	NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
 	DFiniteAutomaton dfa;
 
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));

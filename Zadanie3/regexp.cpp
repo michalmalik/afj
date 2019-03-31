@@ -49,7 +49,7 @@ RegExp RegExp::operator+(RegExp &rhs)
 	size_t left_counter = 0;
 
 	auto &states = new_nfa.getStates();
-	for (const auto & p : m_nfa.getStates())
+	for (const auto &p : m_nfa.getStates())
 	{
 		uint8_t type = p.second.type;
 
@@ -66,13 +66,13 @@ RegExp RegExp::operator+(RegExp &rhs)
 	}
 
 	// Transfer left transitions to new automaton
-	for (const auto & p : m_nfa.getStateTable())
+	for (const auto &p : m_nfa.getStateTable())
 	{
 		const std::string & from = left_old_to_new.at(p.first);
-		for (const auto & t : p.second)
+		for (const auto &t : p.second)
 		{
-			const std::string & symbol = t.first;
-			for (const std::string & to : t.second)
+			const std::string &symbol = t.first;
+			for (const std::string &to : t.second)
 			{
 				new_nfa.addTransition(from, symbol, left_old_to_new.at(to));
 			}
@@ -82,7 +82,7 @@ RegExp RegExp::operator+(RegExp &rhs)
 	const NDFiniteAutomaton &right_nfa = rhs.getAutomaton();
 	
 	// Transfer right symbols to new automaton
-	for (const std::string & s : right_nfa.getAlphabet())
+	for (const std::string &s : right_nfa.getAlphabet())
 	{
 		new_nfa.addSymbol(s);
 	}
@@ -94,7 +94,7 @@ RegExp RegExp::operator+(RegExp &rhs)
 	std::set<std::string> right_initial;
 	size_t right_counter = left_counter;
 
-	for (const auto & p : right_nfa.getStates())
+	for (const auto &p : right_nfa.getStates())
 	{
 		uint8_t type = p.second.type;
 
@@ -111,13 +111,13 @@ RegExp RegExp::operator+(RegExp &rhs)
 	}
 
 	// Transfer right transitions to new automaton
-	for (const auto & p : right_nfa.getStateTable())
+	for (const auto &p : right_nfa.getStateTable())
 	{
-		const std::string & from = right_old_to_new.at(p.first);
-		for (const auto & t : p.second)
+		const std::string &from = right_old_to_new.at(p.first);
+		for (const auto &t : p.second)
 		{
-			const std::string & symbol = t.first;
-			for (const std::string & to : t.second)
+			const std::string &symbol = t.first;
+			for (const std::string &to : t.second)
 			{
 				new_nfa.addTransition(from, symbol, right_old_to_new.at(to));
 			}
@@ -126,9 +126,9 @@ RegExp RegExp::operator+(RegExp &rhs)
 
 	// Concatenate left final states to right initial states
 	// AKA create epsilon transition between them
-	for (const std::string & lf : left_final)
+	for (const std::string &lf : left_final)
 	{
-		for (const std::string & ri : right_initial)
+		for (const std::string &ri : right_initial)
 		{
 			new_nfa.addTransition(lf, "", ri);
 		}
@@ -145,7 +145,7 @@ RegExp RegExp::operator|(RegExp &rhs)
 	std::set<std::string> old_initial;
 
 	// Copy left alphabet
-	for (const std::string & s : m_nfa.getAlphabet())
+	for (const std::string &s : m_nfa.getAlphabet())
 	{
 		new_nfa.addSymbol(s);
 	}
@@ -155,7 +155,7 @@ RegExp RegExp::operator|(RegExp &rhs)
 	std::map<std::string, std::string> left_old_to_new;
 	
 	size_t left_counter = 0;
-	for (const auto & p : m_nfa.getStates())
+	for (const auto &p : m_nfa.getStates())
 	{
 		uint8_t type = p.second.type;
 
@@ -172,13 +172,13 @@ RegExp RegExp::operator|(RegExp &rhs)
 	}
 
 	// Transfer left transitions to new automaton
-	for (const auto & p : m_nfa.getStateTable())
+	for (const auto &p : m_nfa.getStateTable())
 	{
-		const std::string & from = left_old_to_new.at(p.first);
-		for (const auto & t : p.second)
+		const std::string &from = left_old_to_new.at(p.first);
+		for (const auto &t : p.second)
 		{
-			const std::string & symbol = t.first;
-			for (const std::string & to : t.second)
+			const std::string &symbol = t.first;
+			for (const std::string &to : t.second)
 			{
 				new_nfa.addTransition(from, symbol, left_old_to_new.at(to));
 			}
@@ -188,7 +188,7 @@ RegExp RegExp::operator|(RegExp &rhs)
 	// Copy right alphabet
 	const NDFiniteAutomaton &right_nfa = rhs.getAutomaton();
 	
-	for (const std::string & s : right_nfa.getAlphabet())
+	for (const std::string &s : right_nfa.getAlphabet())
 	{
 		new_nfa.addSymbol(s);
 	}
@@ -198,7 +198,7 @@ RegExp RegExp::operator|(RegExp &rhs)
 	std::map<std::string, std::string> right_old_to_new;
 	size_t right_counter = left_counter;
 
-	for (const auto & p : right_nfa.getStates())
+	for (const auto &p : right_nfa.getStates())
 	{
 		uint8_t type = p.second.type;
 
@@ -215,13 +215,13 @@ RegExp RegExp::operator|(RegExp &rhs)
 	}
 
 	// Transfer right transitions to new automaton
-	for (const auto & p : right_nfa.getStateTable())
+	for (const auto &p : right_nfa.getStateTable())
 	{
-		const std::string & from = right_old_to_new.at(p.first);
-		for (const auto & t : p.second)
+		const std::string &from = right_old_to_new.at(p.first);
+		for (const auto &t : p.second)
 		{
-			const std::string & symbol = t.first;
-			for (const std::string & to : t.second)
+			const std::string &symbol = t.first;
+			for (const std::string &to : t.second)
 			{
 				new_nfa.addTransition(from, symbol, right_old_to_new.at(to));
 			}
@@ -253,7 +253,7 @@ RegExp RegExp::operator*(void)
 	std::set<std::string> initials, finals;
 
 	size_t state_counter = 0;
-	for (const auto & p : m_nfa.getStates())
+	for (const auto &p : m_nfa.getStates())
 	{
 		// TO ASK: What if final state is also an initial state? Do we create an epsilon transition to itself? Huh..
 		uint8_t type = p.second.type;
@@ -274,13 +274,13 @@ RegExp RegExp::operator*(void)
 	}
 
 	// Copy all transitions
-	for (const auto & p : m_nfa.getStateTable())
+	for (const auto &p : m_nfa.getStateTable())
 	{
-		const std::string & from = p.first;
-		for (const auto & t : p.second)
+		const std::string &from = p.first;
+		for (const auto &t : p.second)
 		{
-			const std::string & symbol = t.first;
-			for (const std::string & to : t.second)
+			const std::string &symbol = t.first;
+			for (const std::string &to : t.second)
 			{
 				new_nfa.addTransition(from, symbol, to);
 			}

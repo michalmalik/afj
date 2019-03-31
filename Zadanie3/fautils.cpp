@@ -12,10 +12,14 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 	for (const auto &p : nfa.getStates())
 	{
 		if (p.second.isInitial())
+		{
 			initial_states.insert(p.first);
+		}
 
 		if (p.second.isFinal())
+		{
 			final_states.insert(p.first);
+		}
 	}
 
 	// We don't care about epsilon because closure
@@ -25,7 +29,7 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 	dfa.setAlphabet(alphabet);
 
 	std::set<std::string> initial_done;
-	std::set<std::string> closed_initial = nfa.closure(initial_states, initial_done);
+	const std::set<std::string> closed_initial = nfa.closure(initial_states, initial_done);
 
 	uint8_t type = State::Type::INITIAL;
 	if (std::any_of(closed_initial.begin(), closed_initial.end(), [nfa](const std::string &s) { return nfa.getStates().at(s).isFinal(); }))
@@ -41,13 +45,13 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 	while (!q.empty())
 	{
 		std::set<std::string> from = q.front();
-		std::string from_str = Utils::join(from, "");
+		const std::string from_str = Utils::join(from, "");
 		q.pop();
 
 		for (const std::string &symbol : alphabet)
 		{
 			std::set<std::string> done;
-			std::set<std::string> to = nfa.closure(nfa.transitions(from, symbol), done);
+			const std::set<std::string> to = nfa.closure(nfa.transitions(from, symbol), done);
 
 			uint8_t type = State::Type::NONE;
 			if (std::any_of(to.begin(), to.end(), [nfa](const std::string &s) { return nfa.getStates().at(s).isFinal(); }))
@@ -55,7 +59,7 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 				type |= State::Type::FINAL;
 			}
 
-			std::string to_str = Utils::join(to, "");
+			const std::string to_str = Utils::join(to, "");
 
 			if (!to.empty() && dfa.addState(to_str, type))
 			{
