@@ -116,8 +116,13 @@ FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename) cons
 		return Status::FILE_OPEN_FAILED;
 	}
 
+	// We delete epsilon symbol because the output (that is same as the input) format
+	// dictates this
+	std::set<std::string> new_alphabet{ m_alphabet };
+	new_alphabet.erase("");
+
 	out_file << m_states.size() << "\n";
-	out_file << m_alphabet.size() << "\n";
+	out_file << new_alphabet.size() << "\n";
 
 	// Write states
 	for (const auto &p : m_states)
@@ -135,7 +140,7 @@ FiniteAutomaton::Status FiniteAutomaton::write(const std::string &filename) cons
 	}
 
 	// Write alphabet
-	for (const std::string &symbol : m_alphabet)
+	for (const std::string &symbol : new_alphabet)
 	{
 		out_file << symbol << "\n";
 	}
@@ -172,6 +177,16 @@ bool FiniteAutomaton::accept(const std::string &s) const
 		return false;
 	}
 
+	// Handle epsilon string
+	// This can be done with more (is it?) elegant logic:
+	// 1. Convert string to vector of strings
+	// 2. Push back empty string to vector
+	// 3. do while loop with an if checking for empty symbol
+	if (s.empty() && (*it).second.isFinal())
+	{
+		return true;
+	}
+
 	std::string state = (*it).first;
 
 	size_t idx = 0;
@@ -203,7 +218,7 @@ bool FiniteAutomaton::accept(const std::string &s) const
 		}
 
 		idx++;
-	}
+	} 
 
 	return true;
 }

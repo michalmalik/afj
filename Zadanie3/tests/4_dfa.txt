@@ -1,0 +1,14 @@
+4
+3
+q0q1q4q5q7
+q0q1q5q6q7 I
+q2q3
+q8 F
+a
+b
+c
+q0q1q4q5q7,b,q2q3
+q0q1q4q5q7,c,q8
+q0q1q5q6q7,b,q2q3
+q0q1q5q6q7,c,q8
+q2q3,a,q0q1q4q5q7

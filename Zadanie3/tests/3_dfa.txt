@@ -1,0 +1,13 @@
+3
+2
+q0q1q2q4 F
+q0q2q3q4 F
+q0q2q4q5 IF
+a
+b
+q0q1q2q4,a,q0q1q2q4
+q0q1q2q4,b,q0q2q3q4
+q0q2q3q4,a,q0q1q2q4
+q0q2q3q4,b,q0q2q3q4
+q0q2q4q5,a,q0q1q2q4
+q0q2q4q5,b,q0q2q3q4

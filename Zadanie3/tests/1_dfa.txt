@@ -1,0 +1,9 @@
+3
+1
+q0 I
+q1q2q4 F
+q2q3 F
+a
+q0,a,q1q2q4
+q1q2q4,a,q2q3
+q2q3,a,q2q3

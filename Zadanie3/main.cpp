@@ -9,13 +9,13 @@
 
 int main(int argc, char **argv)
 {
-	if (argc < 3)
+	if (argc < 4)
 	{
-		std::cerr << "Usage: " << argv[0] << " <in_nfa> <out_dfa>\n";
+		std::cerr << "Usage: " << argv[0] << " <in_nfa> <final_nfa> <out_dfa>\n";
 		return EXIT_FAILURE;
 	}
 
-	std::string in_expressions(argv[1]), out_dfa(argv[2]);
+	std::string in_expressions(argv[1]), final_nfa(argv[2]), out_dfa(argv[3]);
 
 	RegExpBuilder reb;
 	RegExpBuilder::Status status = reb.load(in_expressions);
@@ -39,8 +39,16 @@ int main(int argc, char **argv)
 
 	RegExp &r = reb.getFinal();
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
-	DFiniteAutomaton dfa;
 
+	if (nfa.write(final_nfa) != FiniteAutomaton::Status::OK)
+	{
+		std::cerr << "Failed to write final NFA to \"" << final_nfa << "\"\n";
+		return EXIT_FAILURE;
+	}
+
+	std::cout << "[+] NFA from final regexp written to \"" << final_nfa << "\"\n";
+
+	DFiniteAutomaton dfa;
 	if (FAUtils::nfa_to_dfa(nfa, dfa))
 	{
 		std::cout << "[+] Final NFA converted to DFA\n";
@@ -642,6 +650,7 @@ TEST_CASE("Builder 2.txt -- E|ab")
 	REQUIRE(q5.count("q5->->q1"));
 
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("ab"));
 	REQUIRE(!dfa.accept("aa"));
 }
@@ -684,6 +693,7 @@ TEST_CASE("Builder 3.txt -- (a|b)*")
 	REQUIRE(q0.count("q0->a->q1"));
 
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("a"));
 	REQUIRE(dfa.accept("b"));
 	REQUIRE(dfa.accept("ab"));
