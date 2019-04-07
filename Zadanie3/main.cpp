@@ -66,23 +66,13 @@ int main(int argc, char **argv)
 	}
 
 	std::cout << "[+] DFA written to \"" << out_dfa << "\"\n";
-	
-	std::string str;
-	bool valid = false;
 
 	while (true)
 	{
-		do {
-			std::cout << "Enter string to check (exit with Ctrl-C): ";
-			std::cin >> str;
+		std::cout << "Enter string to check (exit with Ctrl-C): ";
 
-			if (!(valid = std::cin.good()))
-			{
-				std::cout << "Invalid input\n";
-				std::cin.clear();
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			}
-		} while (!valid);
+		std::string str;
+		std::getline(std::cin, str);
 
 		if (dfa.accept(str))
 		{
@@ -116,6 +106,7 @@ TEST_CASE("Concatenation ab")
 	RegExp r = a + b;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 4);
 	REQUIRE(nfa.getStates().at("q0").isInitial());
@@ -147,6 +138,7 @@ TEST_CASE("Union a|b")
 	RegExp r = a | b;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 5);
 	REQUIRE(nfa.getStates().at("q4").isInitial());
@@ -180,8 +172,11 @@ TEST_CASE("Union a|E")
 	RegExp r = a | e;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
+
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("a"));
 	REQUIRE(!dfa.accept("aa"));
 }
@@ -194,6 +189,7 @@ TEST_CASE("Union + concatenation (ab|ba)")
 	RegExp r = x1 | x2;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 9);
 	REQUIRE(nfa.getStates().at("q8").isInitial());
@@ -247,6 +243,7 @@ TEST_CASE("Iteration a*")
 	RegExp ai = *a;
 
 	const NDFiniteAutomaton &nfa = ai.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 3);
 	REQUIRE(nfa.getStates().at("q2").isInitial());
@@ -265,6 +262,7 @@ TEST_CASE("Iteration a*")
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("a"));
 	REQUIRE(dfa.accept("aa"));
 	REQUIRE(dfa.accept("aaaa"));
@@ -279,6 +277,7 @@ TEST_CASE("Iteration + concat ab*")
 	RegExp r = a + bi;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 5);
 	REQUIRE(nfa.getStates().at("q0").isInitial());
@@ -318,6 +317,7 @@ TEST_CASE("Iteration + concat a*b")
 	RegExp r = ai + b;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 5);
 	REQUIRE(nfa.getStates().at("q2").isInitial());
@@ -345,7 +345,6 @@ TEST_CASE("Iteration + concat a*b")
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
-
 	REQUIRE(dfa.accept("ab"));
 	REQUIRE(dfa.accept("aaaaaaaaab"));
 	REQUIRE(!dfa.accept("a"));
@@ -360,6 +359,7 @@ TEST_CASE("Iteration + concat (ab)*")
 	RegExp r = *x1;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 5);
 	REQUIRE(nfa.getStates().at("q4").isInitial());
@@ -402,6 +402,7 @@ TEST_CASE("Iteration + union (a|b)*")
 	RegExp r = *x1;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 6);
 	REQUIRE(nfa.getStates().at("q5").isInitial());
@@ -448,6 +449,7 @@ TEST_CASE("Iteration + union a|b*")
 	RegExp r = a | bi;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
@@ -467,6 +469,7 @@ TEST_CASE("Compound (E | ba)*c")
 	RegExp r = x1i + c;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
@@ -485,6 +488,7 @@ TEST_CASE("Compound ab*(c|E) -- wikipedia Regular Expressions")
 	RegExp r = x1 + x2;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
@@ -508,6 +512,7 @@ TEST_CASE("Compound (a|(b(ab*a)*b))* -- wikipedia Regular Expressions")
 	RegExp r = *x;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
@@ -534,6 +539,7 @@ TEST_CASE("Compound c*a(b|c)* -- zadanie 2, priklad 4")
 	RegExp r = ci + a + x1i;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
@@ -556,6 +562,7 @@ TEST_CASE("Compound ((ba)* | (ca)*)bb* -- zadanie 2, priklad 5")
 	RegExp r = x + bi;
 
 	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
@@ -570,8 +577,27 @@ TEST_CASE("Builder nothing.txt -- literal void")
 	REQUIRE(reb.getExpressions().size() == 1);
 
 	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	REQUIRE(FAUtils::is_dfa(nfa));
+
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(!dfa.accept(""));
+	REQUIRE(!dfa.accept("a"));
+	REQUIRE(!dfa.accept("b"));
+}
+
+TEST_CASE("Builder epsilon.txt -- only epsilon")
+{
+	RegExpBuilder reb;
+	REQUIRE(reb.load("tests/epsilon.txt") == RegExpBuilder::Status::OK);
+	REQUIRE(reb.getExpressions().size() == 1);
+
+	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	REQUIRE(FAUtils::is_dfa(nfa));
+
+	DFiniteAutomaton dfa;
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(!dfa.accept("a"));
 	REQUIRE(!dfa.accept("b"));
 }
@@ -583,6 +609,8 @@ TEST_CASE("Builder 1.txt -- aa*")
 	REQUIRE(reb.getExpressions().size() == 3);
 
 	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
+	REQUIRE(!FAUtils::is_dfa(nfa));
+
 	DFiniteAutomaton dfa;
 
 	REQUIRE(nfa.getStates().size() == 5);
@@ -621,7 +649,7 @@ TEST_CASE("Builder 2.txt -- E|ab")
 	REQUIRE(reb.getExpressions().size() == 5);
 
 	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
-	DFiniteAutomaton dfa;
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 6);
 	REQUIRE(nfa.getStates().at("q5").isInitial());
@@ -649,6 +677,7 @@ TEST_CASE("Builder 2.txt -- E|ab")
 	REQUIRE(q5.count("q5->->q0"));
 	REQUIRE(q5.count("q5->->q1"));
 
+	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("ab"));
@@ -662,7 +691,7 @@ TEST_CASE("Builder 3.txt -- (a|b)*")
 	REQUIRE(reb.getExpressions().size() == 4);
 
 	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
-	DFiniteAutomaton dfa;
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
 	REQUIRE(nfa.getStates().size() == 6);
 	REQUIRE(nfa.getStates().at("q5").isInitial());
@@ -692,6 +721,7 @@ TEST_CASE("Builder 3.txt -- (a|b)*")
 	REQUIRE(q0.size() == 1);
 	REQUIRE(q0.count("q0->a->q1"));
 
+	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("a"));
@@ -709,10 +739,13 @@ TEST_CASE("Builder 4.txt -- (E|ba)*c")
 	REQUIRE(reb.getExpressions().size() == 8);
 
 	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
-	DFiniteAutomaton dfa;
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
+	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 	REQUIRE(dfa.accept("bac"));
+	REQUIRE(dfa.accept("babac"));
+	REQUIRE(dfa.accept("c"));
 	REQUIRE(!dfa.accept("ba"));
 }
 
@@ -723,10 +756,14 @@ TEST_CASE("Builder 5.txt -- ((acb)*|E)a*b")
 	REQUIRE(reb.getExpressions().size() == 13);
 
 	const NDFiniteAutomaton &nfa = reb.getFinal().getAutomaton();
-	DFiniteAutomaton dfa;
+	REQUIRE(!FAUtils::is_dfa(nfa));
 
+	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 	REQUIRE(dfa.accept("acbaaab"));
+	REQUIRE(dfa.accept("acbb"));
+	REQUIRE(dfa.accept("acbacbab"));
+	REQUIRE(dfa.accept("b"));
 	REQUIRE(!dfa.accept("acbaaabbb"));
 }
 

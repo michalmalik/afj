@@ -182,9 +182,9 @@ bool FiniteAutomaton::accept(const std::string &s) const
 	// 1. Convert string to vector of strings
 	// 2. Push back empty string to vector
 	// 3. do while loop with an if checking for empty symbol
-	if (s.empty() && (*it).second.isFinal())
+	if (s.empty() && !(*it).second.isFinal())
 	{
-		return true;
+		return false;
 	}
 
 	std::string state = (*it).first;

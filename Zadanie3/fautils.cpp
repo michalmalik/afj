@@ -70,5 +70,33 @@ bool FAUtils::nfa_to_dfa(const NDFiniteAutomaton &nfa, DFiniteAutomaton &dfa)
 		}
 	}
 
+	return FAUtils::is_dfa(dfa);
+}
+
+bool FAUtils::is_dfa(const FiniteAutomaton &fa)
+{
+	// DFA is defined by:
+	// "each of its transitions is uniquely determined by its source state and input symbol" -- wikipedia
+	// ^ what this means for us is that we check if going from one state through a symbol is going to just 1 symbol (length of
+	// destination set is 1)
+	//
+	// Also that "reading an input symbol is required for each state transition"
+	for (const auto & p : fa.getStateTable())
+	{
+		if (p.second.count(""))
+		{
+			// Automaton has to read an input symbol in order to be deterministic
+			return false;
+		}
+
+		for (const auto & t : p.second)
+		{
+			if (t.second.size() > 1)
+			{
+				return false;
+			}
+		}
+	}
+
 	return true;
 }
