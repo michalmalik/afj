@@ -386,6 +386,7 @@ TEST_CASE("Iteration + concat (ab)*")
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("ab"));
 	REQUIRE(dfa.accept("abab"));
 	REQUIRE(dfa.accept("ababab"));
@@ -434,6 +435,7 @@ TEST_CASE("Iteration + union (a|b)*")
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("a"));
 	REQUIRE(dfa.accept("b"));
 	REQUIRE(dfa.accept("ab"));
@@ -516,6 +518,7 @@ TEST_CASE("Compound (a|(b(ab*a)*b))* -- wikipedia Regular Expressions")
 
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
 	REQUIRE(dfa.accept("a"));
 	REQUIRE(dfa.accept("aa"));
 	REQUIRE(dfa.accept("bb"));
@@ -544,6 +547,10 @@ TEST_CASE("Compound c*a(b|c)* -- zadanie 2, priklad 4")
 	DFiniteAutomaton dfa;
 	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
 
+	REQUIRE(dfa.accept("a"));
+	REQUIRE(dfa.accept("abc"));
+	REQUIRE(dfa.accept("ca"));
+	REQUIRE(dfa.accept("cacb"));
 	REQUIRE(dfa.accept("ccacb"));
 	REQUIRE(!dfa.accept("ccccb"));
 }

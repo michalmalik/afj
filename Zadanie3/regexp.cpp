@@ -7,7 +7,7 @@
 
 RegExp::RegExp()
 {
-	build(std::set<std::string>{ });
+	buildElementary(std::set<std::string>{ });
 }
 
 
@@ -15,7 +15,7 @@ RegExp::RegExp(const std::string &symbol)
 {
 	if (symbol.empty())
 	{
-		build(std::set<std::string>{ "" });
+		buildElementary(std::set<std::string>{ "" });
 	}
 	else
 	{
@@ -26,7 +26,7 @@ RegExp::RegExp(const std::string &symbol)
 			s.insert(std::string{ c });
 		}
 
-		build(s);
+		buildElementary(s);
 	}
 }
 
@@ -48,7 +48,6 @@ RegExp RegExp::operator+(RegExp &rhs)
 	std::set<std::string> left_final;
 	size_t left_counter = 0;
 
-	auto &states = new_nfa.getStates();
 	for (const auto &p : m_nfa.getStates())
 	{
 		uint8_t type = p.second.type;
@@ -309,7 +308,7 @@ RegExp RegExp::operator*(void)
 }
 
 
-bool RegExp::build(const std::set<std::string> &symbol)
+bool RegExp::buildElementary(const std::set<std::string> &symbol)
 {
 	if (symbol.size() > 1)
 	{

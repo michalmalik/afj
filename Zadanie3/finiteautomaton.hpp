@@ -78,8 +78,6 @@ public:
 	<EOL>
 	*/
 
-	// TODO: read should be only in NDFiniteAutomaton
-	// TODO: write should be only in DFiniteAutomaton
 	Status read(const std::string &filename);
 	Status write(const std::string &filename) const;
 

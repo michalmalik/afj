@@ -23,7 +23,7 @@ public:
 	NDFiniteAutomaton &getAutomaton() { return m_nfa; }
 
 private:
-	bool build(const std::set<std::string> &symbol);
+	bool buildElementary(const std::set<std::string> &symbol);
 
 	NDFiniteAutomaton m_nfa;
 };
