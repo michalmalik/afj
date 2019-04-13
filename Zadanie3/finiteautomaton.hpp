@@ -118,7 +118,7 @@ public:
 class DFiniteAutomaton : public FiniteAutomaton
 {
 public:
-	DFiniteAutomaton() : FiniteAutomaton({ })
+	DFiniteAutomaton() : FiniteAutomaton(std::set<std::string>{ })
 	{
 		;
 	}

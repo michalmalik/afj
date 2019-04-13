@@ -31,10 +31,6 @@ int main(int argc, char **argv)
 		{
 			break;
 		}
-	default:
-		{
-			__assume(0);
-		}
 	}
 
 	RegExp &r = reb.getFinal();
@@ -770,6 +766,7 @@ TEST_CASE("Builder 5.txt -- ((acb)*|E)a*b")
 	REQUIRE(dfa.accept("acbaaab"));
 	REQUIRE(dfa.accept("acbb"));
 	REQUIRE(dfa.accept("acbacbab"));
+	REQUIRE(dfa.accept("ab"));
 	REQUIRE(dfa.accept("b"));
 	REQUIRE(!dfa.accept("acbaaabbb"));
 }
