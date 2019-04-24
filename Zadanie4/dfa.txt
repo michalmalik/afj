@@ -1,0 +1,21 @@
+6
+3
+q0q11q12q5q9
+q0q11q12q6q7q8q9 I
+q10q12q9
+q13 F
+q1q10q12q2q9
+q3q4
+a
+b
+c
+q0q11q12q5q9,a,q1q10q12q2q9
+q0q11q12q5q9,b,q13
+q0q11q12q6q7q8q9,a,q1q10q12q2q9
+q0q11q12q6q7q8q9,b,q13
+q10q12q9,a,q10q12q9
+q10q12q9,b,q13
+q1q10q12q2q9,a,q10q12q9
+q1q10q12q2q9,b,q13
+q1q10q12q2q9,c,q3q4
+q3q4,b,q0q11q12q5q9

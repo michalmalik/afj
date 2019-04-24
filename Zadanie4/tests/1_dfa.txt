@@ -1,0 +1,17 @@
+6
+2
+q0q14q7 I
+q10q12q13q6q9 F
+q10q12q13q9 F
+q1q11q12q2q4q5q8q9
+q2q3q5
+q6 F
+a
+b
+q0q14q7,a,q1q11q12q2q4q5q8q9
+q10q12q13q6q9,b,q10q12q13q9
+q10q12q13q9,b,q10q12q13q9
+q1q11q12q2q4q5q8q9,a,q2q3q5
+q1q11q12q2q4q5q8q9,b,q10q12q13q6q9
+q2q3q5,a,q2q3q5
+q2q3q5,b,q6

@@ -1,0 +1,18 @@
+5
+3
+q0q11q3q5q6q8q9 F
+q0q11q4q5q6q8q9 IF
+q10q9 F
+q11q7q9 F
+q1q10q2q9 F
+a
+b
+c
+q0q11q3q5q6q8q9,b,q1q10q2q9
+q0q11q3q5q6q8q9,c,q11q7q9
+q0q11q4q5q6q8q9,b,q1q10q2q9
+q0q11q4q5q6q8q9,c,q11q7q9
+q10q9,b,q10q9
+q11q7q9,b,q10q9
+q1q10q2q9,a,q0q11q3q5q6q8q9
+q1q10q2q9,b,q10q9
