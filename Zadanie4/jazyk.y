@@ -1,3 +1,9 @@
+// Welcome to memory-leak city, I will be your guide.
+//
+// Disclaimer:
+// This is bad.
+// I feel bad.
+// Do it like this https://github.com/ezaquarii/bison-flex-cpp-example
 %{
 	#include <iostream>
 	#include <string>

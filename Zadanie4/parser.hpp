@@ -59,7 +59,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2058 of yacc.c  */
-#line 13 "jazyk.y"
+#line 19 "jazyk.y"
 
 	std::string *string;
 	int token;

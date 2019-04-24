@@ -205,4 +205,79 @@ TEST_CASE("5.txt -- ((I|i)(f|nt))|((E|e)(nd|lse))|((B|b)(egin))")
 	REQUIRE(dfa.accept("begin"));
 }
 
+TEST_CASE("((acb)*| )a*b -- zadanie 3, priklad 5")
+{
+	yy_scan_string("((acb)*| )a*b");
+	REQUIRE(yyparse() == 0);
+
+	RegExp &r = sem->getFinal();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("acbaaab"));
+	REQUIRE(dfa.accept("acbb"));
+	REQUIRE(dfa.accept("acbacbab"));
+	REQUIRE(dfa.accept("ab"));
+	REQUIRE(dfa.accept("b"));
+	REQUIRE(!dfa.accept("acbaaabbb"));
+}
+
+TEST_CASE("(a|(b(ab*a)*b))* -- wikipedia Regular Expressions")
+{
+	yy_scan_string("(a|(b(ab*a)*b))*");
+	REQUIRE(yyparse() == 0);
+
+	RegExp &r = sem->getFinal();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
+	REQUIRE(dfa.accept("a"));
+	REQUIRE(dfa.accept("aa"));
+	REQUIRE(dfa.accept("bb"));
+	REQUIRE(dfa.accept("aaa"));
+	REQUIRE(dfa.accept("abb"));
+	REQUIRE(dfa.accept("bba"));
+	REQUIRE(dfa.accept("aaaa"));
+	REQUIRE(dfa.accept("aabb"));
+	REQUIRE(dfa.accept("abba"));
+	REQUIRE(dfa.accept("baab"));
+	REQUIRE(dfa.accept("bbaa"));
+	REQUIRE(dfa.accept("bbbb"));
+}
+
+TEST_CASE("c*a(b|c)* -- zadanie 2, priklad 4")
+{
+	yy_scan_string("c*a(b|c)*");
+	REQUIRE(yyparse() == 0);
+
+	RegExp &r = sem->getFinal();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("a"));
+	REQUIRE(dfa.accept("abc"));
+	REQUIRE(dfa.accept("ca"));
+	REQUIRE(dfa.accept("cacb"));
+	REQUIRE(dfa.accept("ccacb"));
+	REQUIRE(!dfa.accept("ccccb"));
+}
+
+TEST_CASE("((ba)*|(ca)*)bb* -- zadanie 2, priklad 5")
+{
+	yy_scan_string("((ba)*|(ca)*)bb*");
+	REQUIRE(yyparse() == 0);
+
+	RegExp &r = sem->getFinal();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("babab"));
+	REQUIRE(!dfa.accept("bacab"));
+}
+
 #endif // _TESTS
