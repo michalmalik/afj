@@ -28,7 +28,6 @@ public:
 private:
 	bool isInPars(const std::string &exp) const;
 	size_t reduce(const std::string &exp) const { return m_reduce_table.at(exp); }
-	void insertReduced(const std::string &exp);
 
 	std::vector<RegExp> m_expressions;
 

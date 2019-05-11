@@ -449,7 +449,7 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    34,    34,    39,    48,    53,    62,    67,    76,    81
+       0,    34,    34,    40,    49,    55,    64,    70,    79,    84
 };
 #endif
 
@@ -1343,16 +1343,17 @@ yyreduce:
 /* Line 1792 of yacc.c  */
 #line 35 "jazyk.y"
     {
-				(yyval.string) = new std::string((yyvsp[(1) - (1)].string)->c_str());
+				// $$ = new std::string($1->c_str());
+				(yyval.string) = (yyvsp[(1) - (1)].string);
 				// std::cout << "regex -> " << $$->c_str() << "\n";
 			}
     break;
 
   case 3:
 /* Line 1792 of yacc.c  */
-#line 40 "jazyk.y"
+#line 41 "jazyk.y"
     {
-				// std::cout << "UNION: regex -> " << $1->c_str() << " | " << $3->c_str() << "\n";
+				//std::cout << "UNION: regex -> " << $1->c_str() << " | " << $3->c_str() << "\n";
 				sem->buildUnion(*(yyvsp[(1) - (3)].string), *(yyvsp[(3) - (3)].string));
 				(yyvsp[(1) - (3)].string)->append("|" + std::string((yyvsp[(3) - (3)].string)->c_str()));
 				sem->reduceExpression(*(yyvsp[(1) - (3)].string));
@@ -1361,16 +1362,17 @@ yyreduce:
 
   case 4:
 /* Line 1792 of yacc.c  */
-#line 49 "jazyk.y"
+#line 50 "jazyk.y"
     {
-				(yyval.string) = new std::string((yyvsp[(1) - (1)].string)->c_str());
+				// $$ = new std::string($1->c_str());
+				(yyval.string) = (yyvsp[(1) - (1)].string);
 				// std::cout << "term -> " << $$->c_str() << "\n"; 
 			}
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
-#line 54 "jazyk.y"
+#line 56 "jazyk.y"
     {
 				// std::cout << "CONCAT: term -> " << $1->c_str() << " + " << $2->c_str() << "\n";
 				sem->buildConcat(*(yyvsp[(1) - (2)].string), *(yyvsp[(2) - (2)].string));
@@ -1381,16 +1383,17 @@ yyreduce:
 
   case 6:
 /* Line 1792 of yacc.c  */
-#line 63 "jazyk.y"
+#line 65 "jazyk.y"
     {
-				(yyval.string) = new std::string((yyvsp[(1) - (1)].string)->c_str());
+				// $$ = new std::string($1->c_str());
+				(yyval.string) = (yyvsp[(1) - (1)].string);
 				// std::cout << "factor -> " << $1->c_str() << "\n";
 			}
     break;
 
   case 7:
 /* Line 1792 of yacc.c  */
-#line 68 "jazyk.y"
+#line 71 "jazyk.y"
     {
 				// std::cout << "ITER: factor -> " << $1->c_str() << "*\n";
 				sem->buildIteration(*(yyvsp[(1) - (2)].string));
@@ -1401,7 +1404,7 @@ yyreduce:
 
   case 8:
 /* Line 1792 of yacc.c  */
-#line 77 "jazyk.y"
+#line 80 "jazyk.y"
     {
 				// std::cout << "base -> " << $1->c_str() << "\n";
 				sem->buildSymbol(std::string((yyvsp[(1) - (1)].string)->c_str()));
@@ -1410,7 +1413,7 @@ yyreduce:
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 82 "jazyk.y"
+#line 85 "jazyk.y"
     {
 				(yyval.string) = new std::string("(" + std::string((yyvsp[(2) - (3)].string)->c_str()) + ")");
 				// std::cout << "base -> ( " << $2->c_str() << " )\n";
@@ -1420,7 +1423,7 @@ yyreduce:
 
 
 /* Line 1792 of yacc.c  */
-#line 1424 "parser.cpp"
+#line 1427 "parser.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1652,4 +1655,4 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 89 "jazyk.y"
+#line 92 "jazyk.y"

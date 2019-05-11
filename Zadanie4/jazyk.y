@@ -33,12 +33,13 @@
 
 Regex :	Term
 			{
-				$$ = new std::string($1->c_str());
+				// $$ = new std::string($1->c_str());
+				$$ = $1;
 				// std::cout << "regex -> " << $$->c_str() << "\n";
 			}
 	  | Term TUNION Regex
 			{
-				// std::cout << "UNION: regex -> " << $1->c_str() << " | " << $3->c_str() << "\n";
+				//std::cout << "UNION: regex -> " << $1->c_str() << " | " << $3->c_str() << "\n";
 				sem->buildUnion(*$1, *$3);
 				$1->append("|" + std::string($3->c_str()));
 				sem->reduceExpression(*$1);
@@ -47,7 +48,8 @@ Regex :	Term
 
 Term : Factor
 			{
-				$$ = new std::string($1->c_str());
+				// $$ = new std::string($1->c_str());
+				$$ = $1;
 				// std::cout << "term -> " << $$->c_str() << "\n"; 
 			}
 	 | Factor Term
@@ -61,7 +63,8 @@ Term : Factor
 
 Factor : Base
 			{
-				$$ = new std::string($1->c_str());
+				// $$ = new std::string($1->c_str());
+				$$ = $1;
 				// std::cout << "factor -> " << $1->c_str() << "\n";
 			}
 	   | Base TITERATION

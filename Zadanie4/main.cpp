@@ -280,4 +280,60 @@ TEST_CASE("((ba)*|(ca)*)bb* -- zadanie 2, priklad 5")
 	REQUIRE(!dfa.accept("bacab"));
 }
 
+TEST_CASE("(aa)* | (bb)* -- zadanie 3, priklad 7")
+{
+	yy_scan_string("(aa)* | (bb)*");
+	REQUIRE(yyparse() == 0);
+
+	RegExp &r = sem->getFinal();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
+	REQUIRE(dfa.accept("aa"));
+	REQUIRE(dfa.accept("bb"));
+	REQUIRE(dfa.accept("aaaa"));
+	REQUIRE(dfa.accept("bbbb"));
+	REQUIRE(!dfa.accept("a"));
+	REQUIRE(!dfa.accept("b"));
+	REQUIRE(!dfa.accept("aaa"));
+	REQUIRE(!dfa.accept("bbb"));
+}
+
+TEST_CASE("ab((a|b)*)ba -- zadanie 3, priklad 9")
+{
+	yy_scan_string("ab((a|b)*)ba");
+	REQUIRE(yyparse() == 0);
+
+	RegExp &r = sem->getFinal();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept("abba"));
+	REQUIRE(dfa.accept("ababa"));
+	REQUIRE(dfa.accept("abaaba"));
+	REQUIRE(dfa.accept("abbba"));
+	REQUIRE(dfa.accept("abbbba"));
+}
+
+TEST_CASE("(a*)(b*)  -- zadanie 3, priklad 10")
+{
+	yy_scan_string("(a*)(b*) ");
+	REQUIRE(yyparse() == 0);
+
+	RegExp &r = sem->getFinal();
+	const NDFiniteAutomaton &nfa = r.getAutomaton();
+	DFiniteAutomaton dfa;
+
+	REQUIRE(FAUtils::nfa_to_dfa(nfa, dfa));
+	REQUIRE(dfa.accept(""));
+	REQUIRE(dfa.accept("a"));
+	REQUIRE(dfa.accept("b"));
+	REQUIRE(dfa.accept("ab"));
+	REQUIRE(dfa.accept("aaaab"));
+	REQUIRE(dfa.accept("bbbbb"));
+}
+
 #endif // _TESTS
