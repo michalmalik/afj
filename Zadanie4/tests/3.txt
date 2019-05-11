@@ -1,1 +1,1 @@
-(ab|ba|bb|aa)(a|b)*
+(((ab)|(ba)|(bb)|(aa))((a|b)*))
